@@ -1,0 +1,53 @@
+#loguearse como root en consola
+
+#verificar la info del puerto asignado
+udevadm info --name=/dev/usb/lp0 --attribute-walk
+# Notese que en  ATTRS{product}=="FX-890" me da el nombre del producto, con ese valor puedo asignar un nombre parecido al enlace
+ ATTRS{idProduct}=="003a"
+ ATTRS{idVendor}=="04b8"
+ ATTRS{product}=="FX-890"
+
+
+#crear el archivo para las reglas:
+nano /etc/udev/rules.d/99-usb-serial.rules
+#para un impresor matricial
+SUBSYSTEMS=="usb", AATTRS{idVendor}=="04b8", ATTRS{idProduct}=="003a",  ATTRS{product}=="FX-890", SYMLINK+="FX_890" 
+#recargar el daemon de udev:
+udevadm trigger
+#testing ver si esta listo
+udevadm test -a -p  $(udevadm info -q path -n /dev/FX_890) 
+
+# para el de ticket repetir
+udevadm info --name=/dev/usb/lp1 --attribute-walk
+
+buscar esta info en la salida:  ATTRS{idProduct}, ATTRS{idVendor}, ATTRS{product} y traer sus valores, para nuestro caso:
+    ATTRS{idProduct}=="811e"
+    ATTRS{idVendor}=="0fe6"
+    ATTRS{product}=="USB Receipt Printer"
+
+#editar(o crear) el archivo de las reglas usb
+nano /etc/udev/rules.d/99-usb-serial.rules 
+#agregar la info de nuestro device:
+
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0fe6", ATTRS{idProduct}=="811e",ATTRS{product}=="USB Receipt Printer", SYMLINK+="Bematech" 
+
+#recargar el daemon d eudev:
+udevadm trigger
+
+#testing para identificar el valor DEVNAME=/dev/usb/lp1 que nos comfirma en que puerto esta nuestro dispositivo
+udevadm test -a -p  $(udevadm info -q path -n /dev/Bematech) 
+#con esto podemos ver tambien que esta redireccionado al puerto
+ls -la /dev/Bematech
+
+
+#Despues de esto en cada script de php asignar el equipo en el que se va imprimir (ya no por el puerto) sino por el nombre que le hemos asignado
+# para nuestro ejemplo el impresor de ticker lo llamamos Bematech, asi la variable $printer en php para el script de ticket printpos.php queda:
+$printer="/dev/Bematech";
+#para el script de facturas printfact1.php y el de  creditos fiscales, printcf1.php queda:
+$printer="/dev/FX_890";
+
+# Probamos y si se hizo bien automaticamente redireccionara a cada equipo a la hora de imprimir sin estar reasignando el puerto cada vez que se conecta 
+#o desconecta un equipo o se  apaga la maquina
+
+#para los permisos de usuario tambien agregar el usuario www-data y el/los usuarios  de linux que no son root al grupo lp:
+usermod -a -G lp nombreusuario

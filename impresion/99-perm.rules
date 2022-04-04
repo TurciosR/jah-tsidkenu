@@ -1,0 +1,3 @@
+# SUBSYSTEM=="usb", ATTRS{idProduct}=="811e", OWNER="<NON_ROOT_USER>", SYMLINK+="dev/Bematech"
+SUBSYSTEM=="usb", OWNER="<NON_ROOT_USER>"
+

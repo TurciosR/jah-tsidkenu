@@ -1,0 +1,4 @@
+#PARA UN IMPRESOR DE TICKET BEMATECH
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0fe6", ATTRS{idProduct}=="811e",ATTRS{product}=="USB Receipt Printer", SYMLINK+="Bematech"
+#EPSON MATRCIAL LX-350
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="04b8", ATTRS{idProduct}=="0046",ATTRS{product}=="LX-350", SYMLINK+="Matrix1"
