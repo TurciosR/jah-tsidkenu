@@ -227,5 +227,4 @@ class Clasifica_clientes extends yidas\rest\Controller {
     }
 
 }
-
 /* End of file Clasifica_clientes.php */
