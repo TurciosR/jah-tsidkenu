@@ -73,6 +73,23 @@ $(document).ready(function () {
 	});
 });
 
+$("#generarReporteTraslados").click(function(){
+	//alert("hola");
+	let sucursal_despacho = $('#sucursalDespacho').val();
+	let sucursal_destino = $('#sucursalDestino').val();
+	//alert(valor);
+	//alert("aqui");
+	let fechaInicio = $(".fechaInicio").val();
+	let fechaFin = $(".fechaFin").val();
+	if (sucursal_despacho == "" || sucursal_destino == "") {
+		notification("warning","Alerta","Elegir la sucursal de despacho y destino");
+	}
+	else {
+		window.open(url + "/reporte_traslado_rango/"+fechaInicio+"/"+fechaFin+"/"+sucursal_despacho+"/"+sucursal_destino,
+		 "_blank");
+	}
+});
+
 $("#sucursalK").on('change', function(e){
 	var sucursal = $(this).val();
 	let dataString = "id=" + sucursal+"&csrf_test_name="+token;

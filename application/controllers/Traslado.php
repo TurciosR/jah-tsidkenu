@@ -721,6 +721,7 @@ class Traslado extends CI_Controller {
 		}
 		$pdf->Output();
 	}
+
 	function imprimir_ticket(){
 		$this->load->helper('print_helper');
 		$this->load->library('user_agent');

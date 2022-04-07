@@ -1,0 +1,1310 @@
+3
+Wed Aug  7 06:55:01 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+1 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+1 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+0 data to sync
+factura_detalle OK
+0 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+1 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+0 data to sync
+movimiento_producto_detalle OK
+0 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+0 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+36 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 07:05:01 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+2 data to sync
+factura_detalle OK
+3 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+16 data to sync
+lote OK
+1 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+3 data to sync
+movimiento_producto_detalle OK
+4 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+4 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 07:15:01 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+2 data to sync
+factura_detalle OK
+3 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+13 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+2 data to sync
+movimiento_producto_detalle OK
+3 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+3 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 07:25:01 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+3 data to sync
+factura_detalle OK
+5 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+21 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+3 data to sync
+movimiento_producto_detalle OK
+5 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+5 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 07:35:02 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+3 data to sync
+factura_detalle OK
+8 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+30 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+3 data to sync
+movimiento_producto_detalle OK
+8 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+8 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 07:45:01 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+3 data to sync
+factura_detalle OK
+5 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+21 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+3 data to sync
+movimiento_producto_detalle OK
+5 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+5 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 07:55:02 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+2 data to sync
+factura_detalle OK
+3 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+13 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+2 data to sync
+movimiento_producto_detalle OK
+3 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+3 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 08:05:01 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+6 data to sync
+factura_detalle OK
+9 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+39 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+6 data to sync
+movimiento_producto_detalle OK
+9 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+9 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 08:15:02 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+4 data to sync
+factura_detalle OK
+6 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+26 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+4 data to sync
+movimiento_producto_detalle OK
+6 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+6 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID
+3
+Wed Aug  7 08:25:02 2019
+available
+abono_credito OK
+0 data to sync
+access_conf no_sync
+apertura_caja OK
+0 data to sync
+banco OK
+0 data to sync
+caja OK
+0 data to sync
+categoria no_sync
+categoria_proveedor no_sync
+cheque OK
+0 data to sync
+cliente OK
+0 data to sync
+compra OK
+0 data to sync
+config_dir OK
+0 data to sync
+config_pos OK
+0 data to sync
+configuracion no_sync
+controlcaja OK
+0 data to sync
+correlativo OK
+0 data to sync
+cotizacion OK
+0 data to sync
+cotizacion_detalle OK
+0 data to sync
+credito OK
+0 data to sync
+cuenta_banco OK
+0 data to sync
+cuenta_pagar OK
+0 data to sync
+departamento no_sync
+detalle_apertura OK
+0 data to sync
+detalle_compra OK
+0 data to sync
+detalle_voucher OK
+0 data to sync
+devoluciones OK
+0 data to sync
+devoluciones_corte OK
+0 data to sync
+devoluciones_det OK
+0 data to sync
+empleado OK
+0 data to sync
+empresa no_sync
+estante OK
+0 data to sync
+factura OK
+4 data to sync
+factura_detalle OK
+11 data to sync
+log_cambio_local manual_sync
+log_detalle_cambio_local no_sync
+log_update_local OK
+41 data to sync
+lote OK
+0 data to sync
+mail no_sync
+menu no_sync
+modulo no_sync
+mov_caja OK
+0 data to sync
+mov_cta_banco OK
+0 data to sync
+movimiento_caja_tipo no_sync
+movimiento_producto OK
+4 data to sync
+movimiento_producto_detalle OK
+11 data to sync
+movimiento_producto_detalle_s OK
+0 data to sync
+movimiento_producto_pendiente OK
+0 data to sync
+movimiento_stock_ubicacion OK
+11 data to sync
+municipio no_sync
+nc_corte OK
+0 data to sync
+paises no_sync
+pedido OK
+0 data to sync
+pedido_detalle OK
+0 data to sync
+pedido_prov no_sync
+pedido_prov_detalle no_sync
+posicion OK
+0 data to sync
+presentacion no_sync
+presentacion_producto manual_sync
+presentacion_producto_precio manual_sync
+producto manual_sync
+proveedor manual_sync
+ruta no_sync
+rutas no_sync
+sms no_sync
+stock OK
+0 data to sync
+stock_ubicacion OK
+0 data to sync
+sucursal OK
+0 data to sync
+tipo_empleado no_sync
+tipo_pago no_sync
+tipo_proveedor no_sync
+traslado manual_sync
+traslado_detalle manual_sync
+traslado_detalle_g manual_sync
+traslado_detalle_recibido manual_sync
+traslado_g manual_sync
+ubicacion OK
+0 data to sync
+usuario OK
+0 data to sync
+usuario_modulo OK
+0 data to sync
+voucher OK
+0 data to sync
+voucher_mov OK
+0 data to sync
+success
+borrando archivo PID

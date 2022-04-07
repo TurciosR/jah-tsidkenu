@@ -335,11 +335,46 @@ function get_reservado($id_producto,$id_venta,$id_color){
 }
 
 function get_detalle_traslado($id){
+	
 	$sql = $this->db->query("SELECT GROUP_CONCAT(CONCAT_WS(' ' , p.nombre , p.modelo, c.color) SEPARATOR '<br><br>')
-	as detalle_t FROM traslado_detalle as td INNER JOIN producto as p ON p.id_producto = td.id_producto
+	as detalle_t
+	FROM traslado_detalle as td INNER JOIN producto as p ON p.id_producto = td.id_producto
 	INNER JOIN producto_color as c ON c.id_color = td.id_color WHERE td.id_traslado = $id");
+	
 	if ($sql->num_rows() > 0) {
 		return $sql->row();
+	} else {
+		return 0;
+	}
+}
+
+function get_all_detalle_traslado($id_traslado){
+	$sql = $this->db->query("SELECT p.nombre , p.modelo, c.color, td.cantidad
+	FROM traslado_detalle as td INNER JOIN producto as p ON p.id_producto = td.id_producto
+	INNER JOIN producto_color as c ON c.id_color = td.id_color WHERE td.id_traslado = $id_traslado");
+	
+	if ($sql->num_rows() > 0) {
+		return $sql->result();
+	} else {
+		return 0;
+	}
+}
+
+function get_traslados_entre_fechas($fecha_inicio, $fecha_fin, $sucursal_despacho, $sucursal_destino ){
+	$sql = $this->db->query("SELECT traslado.fecha, traslado.hora, traslado.concepto, traslado.estado,
+		traslado.id_traslado, usuario.usuario
+		FROM traslado 
+		LEFT JOIN usuario ON usuario.id_usuario = traslado.id_usuario
+		WHERE traslado.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin' 
+		AND traslado.id_sucursal_despacho= $sucursal_despacho AND traslado.id_sucursal_destino= $sucursal_destino");
+	
+	/*echo "SELECT traslado.fecha, traslado.hora, traslado.concepto, traslado.estado,
+	traslado.id_traslado, usuario.nombre
+	FROM traslado LEFT JOIN usuario ON usuario.id_usuario = traslado.id_usuario
+	WHERE traslado.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin' 
+	AND traslado.id_sucursal_despacho= $sucursal_despacho AND traslado.id_sucursal_destino= $sucursal_destino";*/
+	if ($sql->num_rows() > 0) {
+		return $sql->result();
 	} else {
 		return 0;
 	}

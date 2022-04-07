@@ -15,9 +15,10 @@ class Reportes extends CI_Controller {
 		$this->load->Model("ColoresModel","colores");
 		$this->load->helper("upload_file");
 		$this->load->model('UtilsModel',"utils");
-    $this->load->model("ReportesModel","reportes");
+    	$this->load->model("ReportesModel","reportes");
 		$this->load->model("InventarioModel","inventario");
 		$this->load->model("ProductosModel","productos");
+		$this->load->model("TrasladoModel", "traslado");
 	}
 
 	function agregar(){
@@ -380,7 +381,7 @@ class Reportes extends CI_Controller {
 		else{
 			$arrSucursal = $this->reportes->get_row_sucursal($sucursal);
 			$sucursalNombre = $arrSucursal->nombre;
-			$sucursalDireccion = $arrSucursal->direccion; 
+			$sucursalDireccion = $arrSucursal->direccion;
 		}
     $this->load->library('Report');
     //procedemos a obtener el tipo de reporte
@@ -922,6 +923,181 @@ class Reportes extends CI_Controller {
 			}
 		}
 		$pdf->Output();
-  }
-}
+  	}// FIN Generar Movimiento
+
+	function traslados(){
+
+		if($this->input->method(TRUE) == "GET"){
+			$id_sucursal = 1;
+			//var_dump($categorias);
+      		//var_dump($generarReportes);
+			$data = array(
+				"sucursal"=>$this->inventario->get_detail_rows("sucursales",array('1' => 1, )),
+				"id_sucursal" => $this->session->id_sucursal,
+			);
+			$extras = array(
+				'css' => array(
+				),
+				'js' => array(
+                    "js/scripts/reportes.js",
+				),
+			);
+			layout("reports/generar_reporte_traslados",$data,$extras);
+		}
+	} //FIN traslados()
+
+	function reporte_traslado_rango(){
+		$fechaInicio = $this->uri->segment(3); //sucursal de origen
+		$fechaFin = $this->uri->segment(4);//sucursal de destino
+		$sucursalDespacho = $this->uri->segment(5);//fecha de inicio
+		$sucursalDestino = $this->uri->segment(6);//fecha de inicio
+
+		$fechaInicio = date("Y-m-d", strtotime($fechaInicio));
+		$fechaFin = date("Y-m-d", strtotime($fechaFin));
+		
+		//procedemos a obtener los datos de la sucursal
+		$arrSucursalOrigen = $this->reportes->get_row_sucursal($sucursalDespacho);
+		$arrSucursalDestino = $this->reportes->get_row_sucursal($sucursalDestino);
+
+		$this->load->library('Report');
+		$pdf = $this->report->getInstance('P','mm', 'Letter');
+		$logo = "assets/img/logo.png";
+		$pdf->SetMargins(1, 10);
+		$pdf->SetLeftMargin(5);
+		$pdf->AliasNbPages();
+		$pdf->SetAutoPageBreak(true, 15);
+		$pdf->AliasNbPages();
+		$data = array("empresa" => "Jah",
+			"imagen" => $logo, 
+			"fecha" => date("d-m-Y"), 
+			"titulo" => "Reporte de Traslados",
+			"nombre_empresa" => "Jah - TSIDKENNU",
+			"telefonos" => "",
+			"razon_social" => "",
+		);
+		$pdf->setear($data);
+		$pdf->addPage();
+		$pdf->SetFont('Arial','B',11);
+
+		$l = array(
+			's' => 10,
+			'tit' =>185,
+		);
+		$array_data = array(
+			array('',$l['s'],"C"),
+			array("REPORTE DE TRASLADOS ENTRE SUCURSALES",$l['tit'],"C"),
+		);
+		$pdf->LineWrite($array_data);
+		$pdf->LN(5);
+
+		$pdf->SetFont('Arial','B',10);
+		$l = array(
+			's' => 10,
+			'izq' =>90,
+			'der' =>95,
+		);
+		/**Encabezado */
+		$array_data = array(
+			array('',$l['s'],"C"),
+			array("ORIGEN: ".$arrSucursalOrigen->nombre,$l['izq'],"C"),
+			array("DESDE: ".$fechaInicio,$l['der'],"C"),
+		);
+		$pdf->LineWrite($array_data);
+		$array_data = array(
+			array('',$l['s'],"C"),
+			array("DESTINO: ".$arrSucursalDestino->nombre,$l['izq'],"C"),
+			array("HASTA: ".$fechaFin,$l['der'],"C"),
+		);
+		$pdf->LineWrite($array_data);
+		$pdf->LN(5);
+
+		//**Fin del encabezado, inicia la tabla */
+		$ancho_columna = array(
+			'id_traslado' => 20,
+			'fecha' => 22,
+			'usuario' => 30,
+			'descripcion' =>87,
+			'cantidad' =>18,
+			'estado' => 25,
+		);
+		$array_data = array(
+			array('',1,"C"), //Columna de relleno para que se pinte el border
+			array('# Traslado',$ancho_columna['id_traslado'],"C"),
+			array("Fecha",$ancho_columna['fecha'],"L"),
+			array("Producto",$ancho_columna['descripcion'],"L"),
+			array("Usuario",$ancho_columna['usuario'],"L"),
+			array("Cantidad",$ancho_columna['cantidad'],"L"),
+			array("Estado",$ancho_columna['estado'],"L"),
+		);
+		$pdf->LineWriteB($array_data);
+	
+		$data = $this->traslado->get_traslados_entre_fechas($fechaInicio, $fechaFin, $sucursalDespacho, $sucursalDestino);
+		
+		$pdf->SetFont('Arial','',10);
+		if(!$data == 0){ //Si no se retorna nada de la consulta.
+			
+			foreach ($data as $arrData) {
+				$estado = "PENDIENTE";
+				if($arrData->estado == 1){
+					$estado = "FINALIZADO";
+				}
+				$total_cantidad = 0;
+				
+				$array_data = array(
+					array('',1,"C"), //Columna de relleno para que se pinte el border
+					array($arrData->id_traslado,$ancho_columna['id_traslado'],"C"),
+					array($arrData->fecha,$ancho_columna['fecha'],"L"),
+					array($arrData->concepto,$ancho_columna['descripcion'],"L"),
+					array($arrData->usuario,$ancho_columna['usuario'],"L"),
+					array("",$ancho_columna['cantidad'],"R"),
+					array($estado,$ancho_columna['estado'],"L"),
+				);
+				//ARRRAY de RGB para setear el color de la celda nueva a insertar
+				$RGB =[214, 224, 245];
+				$pdf->LineWriteFilled($array_data, $RGB);
+				//$pdf->LineWriteB($array_data);
+
+				//Luego de agregar la linea del traslado, agregar la lista de productos trasladados
+				$detalle_traslado = $this->traslado->get_all_detalle_traslado($arrData->id_traslado);
+				if(!$detalle_traslado == 0){
+					
+					$prod_descripcion = '';
+					$prod_cantidades = ''; //Aumentar los precios aqui para que aprezcan listados igual que los productos
+					foreach ($detalle_traslado as $row_detalle) {
+						//Luego de agregar la linea del traslado, agregar la lista de productos trasladados
+						$detalle_traslado = $this->traslado->get_detalle_traslado($arrData->id_traslado);
+						$total_cantidad += $row_detalle->cantidad;
+						/*Concatenar los campos de Nombre, modelo y color del prodcto*/
+						$prod_descripcion .= "*( ".$row_detalle->cantidad." ) ".$row_detalle->nombre;
+						$prod_descripcion .= " ".$row_detalle->modelo;
+						$prod_descripcion .= " ".$row_detalle->color.".";
+						$prod_descripcion .= "\n";
+
+						$prod_cantidades .= ($prod_cantidades == "") ? "" : "\n";
+						//$prod_cantidades .= $row_detalle->cantidad;
+					}
+					$array_detalle = array(
+						array('',1,"C"), //Columna de relleno para que se pinte el border
+						array("",$ancho_columna['id_traslado'],"C"),
+						array("",$ancho_columna['fecha'],"L"),
+						array($prod_descripcion,$ancho_columna['descripcion'],"L"),
+						array("",$ancho_columna['usuario'],"L"),
+						array($total_cantidad,$ancho_columna['cantidad'],"C"),
+						array("",$ancho_columna['estado'],"L"),
+					);
+					$pdf->LineWriteB($array_detalle);
+				}
+			}
+		}else{
+			$array_data = array(
+				//SUMARTORIA DE TODOS LOS ANCHOS DE LA TABLA PARA QUE QUEDE UNA SOLA
+				array("No se encontraron Datos que mostrar", 203 ,"C")
+			);
+			$pdf->LineWriteB($array_data);
+		}//FIN si se retorna o no de la primera consulta
+		
+		$pdf->Output();
+	}//FIN function reporte traslado de rangos
+
+}//FIN Reporte Class
 /* End of file Productos.php */
