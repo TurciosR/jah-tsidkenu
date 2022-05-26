@@ -190,7 +190,7 @@ class ReportesModel extends CI_Model
 			INNER JOIN producto_color as c ON c.id_color = vd.id_color
 			INNER JOIN sucursales as s ON s.id_sucursal = v.id_sucursal
 			WHERE p.id_producto=$id AND c.id_color=$color
-			AND v.fecha <= '$fechaF' AND v.id_estado=2
+			AND v.fecha <= '$fechaF' AND v.id_estado=2 AND v.tipo_doc <> 4
 			ORDER BY v.fecha ASC)
 			UNION
 			(SELECT p.id_producto, p.nombre, p.marca, p.modelo, c.color, c.id_color, 0 as stock_anterior,
@@ -279,7 +279,7 @@ class ReportesModel extends CI_Model
 			INNER JOIN producto_color as c ON c.id_color = vd.id_color
 			INNER JOIN sucursales as s ON s.id_sucursal = v.id_sucursal
 			WHERE p.id_producto=$id AND c.id_color=$color AND v.id_sucursal=$sucursal
-			AND v.fecha <= '$fechaF' AND v.id_estado=2
+			AND v.fecha <= '$fechaF' AND v.id_estado=2 AND v.tipo_doc <> 4
 			ORDER BY v.fecha ASC)
 			UNION
 			(SELECT p.id_producto, p.nombre, p.marca, p.modelo, c.color, c.id_color, 0 as stock_anterior,
@@ -297,6 +297,8 @@ class ReportesModel extends CI_Model
 			ORDER BY d.fecha ASC)
 			");
 		}
+		// echo $this->db->last_query();
+		// die();
 		if ($sql->num_rows()>0) {
 			// code...
 			//return $sql->result();
