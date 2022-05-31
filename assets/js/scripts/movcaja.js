@@ -572,6 +572,8 @@ function save_data_vale(){
 }
 function save_data_ing(){
 
+  $("#btn_add_ing").prop("disabled",true);
+
   var errors = false;
   let urls=url+'/agregar_ing';
 
