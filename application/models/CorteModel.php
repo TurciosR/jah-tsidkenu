@@ -184,6 +184,7 @@ class CorteModel extends CI_Model
 		$this->db->select_sum("valor");
 		$this->db->where("id_sucursal",$id_sucursal);
 		//$this->db->where("id_apertura",$id_apertura);
+		// If it is anulated then it does not come to the sum
 		$this->db->where("anulado",0);
 		$this->db->where($tipo_mov,1);
 		$this->db->where("fecha",$fecha_apertura);
