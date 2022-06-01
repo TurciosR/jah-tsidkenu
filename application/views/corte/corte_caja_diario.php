@@ -193,7 +193,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td><label><?php echo number_format($total_tarjeta_fin, 2, ".", ","); ?></label></td>
+                            <td><input type="hidden" id="total_tarjeta_fin" name="total_tarjeta_fin" value="<?= $total_tarjeta_fin; ?>"><label><?php echo number_format($total_tarjeta_fin, 2, ".", ","); ?></label></td>
                           </tr>
                         </tbody>
                       </table>

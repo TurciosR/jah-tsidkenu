@@ -548,6 +548,7 @@ class Corte extends CI_Controller {
 			$total_retencion=$this->input->post("total_retencion");
 			$total_dev=$this->input->post("total_dev");
 			$total_efectivo_fin=$this->input->post("total_efectivo_fin");
+			$total_tarjeta_fin=$this->input->post("total_tarjeta_fin");
 			$total_entrada_caja=$this->input->post("total_entrada_caja");
 			$total_salida_caja=$this->input->post("total_salida_caja");
 			$total_efectivo=$this->input->post("total_efectivo");
@@ -599,6 +600,7 @@ class Corte extends CI_Controller {
 				'diferencia' => $diferencia_val,
 				'totalgral' => $total_fin,
 				'cashfinal' => $total_efectivo,
+				'tarjetasfinal' => $total_tarjeta_fin,
 				'cashinicial' => $monto_apertura,
 				'tipo_corte' => $tipo_corte,
 				//'vtaefectivo' => $total_contado, //pendiente e importante facturar tipo pago
