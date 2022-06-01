@@ -255,6 +255,14 @@ class Corte extends CI_Controller {
 		exit();
 	}
 
+// TODO: Almacenar el dinero que entra en tarjetas de debito / credito en alguna parte
+// Ademas mostrar tambien las salidas de dinero en devoluciones en el modal de detalles
+// El total final de efectivo se calcula asi
+// Total Docs + Total Entradas - Total salidas - Total devoluciones
+
+// Por ello si se registra primero una venta con tarjeta y despues una devolucion, siempre
+// faltara en caja la cantidad de la devolucion por el hecho de que el dinero que entro por
+// tarjeta no se suma a la caja, sin embargo el dinero que sale si se resta de caja
 	function corte_caja_diario(){
 		//Falta agregar ventas en efectivo o tarjeta en el form facturacion, asi como
 		//impresion de ticket de corte,  enform de facturas revision de F3 factura para cambiar codigo
