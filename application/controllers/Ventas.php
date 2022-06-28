@@ -66,8 +66,9 @@ class Ventas extends CI_Controller {
 			"table"=>array(
 				"Id"=>5,
 				"Fecha"=>5,
-				"Cliente"=>20,
+				"Cliente"=>15,
 				"Total $"=>10,
+				"Pago"=>5, //metodo de pago
 				"Tipo"=>10,
 				"Estado"=>5,
 				"Detalle"=>35,
@@ -109,8 +110,9 @@ class Ventas extends CI_Controller {
 			0 => 'v.id_venta',
 			1 => 'v.fecha',
 			2 => 'c.nombre',
-			3 => 't.nombredoc',
-			4 => 'v.total',
+			3 => 'tp.alias_tipopago',
+			4 => 't.nombredoc',
+			5 => 'v.total',
 		);
 		if (!isset($valid_columns[$col])) {
 			$order = null;
@@ -150,6 +152,7 @@ class Ventas extends CI_Controller {
 					$rows->fecha,
 					$rows->nombre,
 					$rows->total,
+					$rows->alias_tipopago,
 					$rows->nombredoc,
 					$rows->descripcion,
 					$detalleV->detalle_v,
@@ -168,6 +171,7 @@ class Ventas extends CI_Controller {
 				"",
 				"",
 				"No se encontraron registros",
+				"",
 				"",
 				"",
 				"",

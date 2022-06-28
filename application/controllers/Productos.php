@@ -159,14 +159,38 @@ class Productos extends CI_Controller {
 		exit();
 	}
 
+	function encontrarP($array, $descripcion){
+
+    foreach ( $array as $element ) {
+        if ( $descripcion == $element->descripcion ) {
+            return $element;
+        }
+    }
+
+    return false;
+}
+
 	function agregar(){
 		if($this->input->method(TRUE) == "GET"){
 			$categorias = $this->productos->get_categorias();
 			$precios = $this->productos->get_precios();
 			$dias = $this->inventario->get_one_row("dias_garantia",array('1' => 1));
 			$config_impuestos = $this->utils->get_one_row("configuracion",array('1' => 1));
+			
+			// CAMBIOS 28/06/2022
+			$reordenado = array();
+
+			array_push($reordenado, $this->encontrarP($precios, "CLIENTE FINAL"));
+			array_push($reordenado, $this->encontrarP($precios, "CLIENTE FRECUENTE"));
+			array_push($reordenado, $this->encontrarP($precios, "ACTIVADOR"));
+			array_push($reordenado, $this->encontrarP($precios, "MAYOREO"));
+
+			// var_dump($reordenado);
+			// die();
+			// FIN CAMBIOS 28/06/2022
+
 			$data = array(
-				"precios"=>$precios,
+				"precios"=>$reordenado,
 				"categorias"=>$categorias,
 				"dias"=>$dias,
 				"config_impuestos"=>$config_impuestos,
@@ -332,10 +356,22 @@ class Productos extends CI_Controller {
 				$colores = $this->productos->get_colores_exis($id);
 				$config_impuestos = $this->utils->get_one_row("configuracion",array('1' => 1));
 
+				// CAMBIOS 28/06/2022
+				$reordenado = array();
+
+				array_push($reordenado, $this->encontrarP($precios, "CLIENTE FINAL"));
+				array_push($reordenado, $this->encontrarP($precios, "CLIENTE FRECUENTE"));
+				array_push($reordenado, $this->encontrarP($precios, "ACTIVADOR"));
+				array_push($reordenado, $this->encontrarP($precios, "MAYOREO"));
+
+				// var_dump($reordenado);
+				// die();
+				// FIN CAMBIOS 28/06/2022
+
 				$data = array(
 					"row"=>$row,
 					"categorias"=>$categorias,
-					"precios"=>$precios,
+					"precios"=>$reordenado,
 					"colores"=>$colores,
 						"config_impuestos"=>$config_impuestos,
 				);
@@ -504,6 +540,20 @@ class Productos extends CI_Controller {
 		$id_producto = $this->input->post("id_producto");
 		$lista = "";
 		$precios = $this->productos->get_precios();
+
+		// CAMBIOS 28/06/2022
+		$reordenado = array();
+
+		array_push($reordenado, $this->encontrarP($precios, "CLIENTE FINAL"));
+		array_push($reordenado, $this->encontrarP($precios, "CLIENTE FRECUENTE"));
+		array_push($reordenado, $this->encontrarP($precios, "ACTIVADOR"));
+		array_push($reordenado, $this->encontrarP($precios, "MAYOREO"));
+
+		$precios = $reordenado;
+		// var_dump($reordenado);
+		// die();
+		// FIN CAMBIOS 28/06/2022
+
 
 		if ($exento_iva==1) {
 			// si el producto es exento de iva...

@@ -63,13 +63,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
       <div class="col-lg-12">
           <div class="form-group single-line">
               <label for="tipo_pago">Tipo pago<span class="text-danger">*</span></label>
-              <select name="tipo_pago" id="tipo_pago" class="form-control" >
+              <select name="tipo_pago" id="tipo_pago" class="form-control" required>
+              <option selected="selected" disabled="disabled" value="">Seleccionar</option>
                   <?php foreach ($tipo_pago as $tp): ?>
                     <?php if($tp->inactivo==0):?>
                       <option value="<?=$tp->id_tipopago?>"
-                          <?php if($tp->id_tipopago==1) echo "selected"; ?>>
+                          >
                             <?=$tp->descripcion?></option>
-                          <?php endif; ?>
+                            <!-- <?php if($tp->id_tipopago==1) echo "selected"; ?><?php endif; ?> -->
                   <?php endforeach; ?>
 
               </select>

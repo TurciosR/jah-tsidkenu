@@ -513,6 +513,8 @@ $(document).on("click", ".delete", function() {
 
 function save_data_vale(){
 
+  $("#btn_add_vale").prop("disabled",true);
+
   var errors = false;
   let urls=url+'/agregarvale';
 
