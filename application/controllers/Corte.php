@@ -271,8 +271,8 @@ class Corte extends CI_Controller {
 				//Datos extra que verifican el estado de Apertura
 				$id_usuario = $this->session->id_usuario;
 				$id_sucursal = $this->session->id_sucursal;
-				$fecha = date('Y-m-d');
-				$hora_actual= date("H:i:s");
+				$fecha = date('Y-m-d'); //'2019-01-01';
+				$hora_actual= date("H:i:s");	//'00:00:00';
 				//$row_ap = $this->corte->get_caja_activa($id_usuario,$fecha);
 
 				$row_ap = $this->corte->get_cajas_activa_sucursal($id_sucursal,$fecha);

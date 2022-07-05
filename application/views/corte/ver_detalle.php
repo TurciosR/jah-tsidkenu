@@ -96,7 +96,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <td><input type="hidden" id="total_efectivo_fin" name="total_efectivo_fin" value="<?= $total_tmp; ?>"><label id="id_total"><?php echo number_format($total_tmp, 2, ".", ","); ?></label></td>
               </tr>
               
-              <?php if ($rowcorte->tarjetasfinal > 0) :?>
+              <!-- <?php if ($rowcorte->tarjetasfinal > 0) :?>
               <tr>
                 <td>INGRESOS POR TARJETAS DEBITO / CREDITO</td>
                 <td></td>
@@ -104,7 +104,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <td>$</td>
                 <td><?php echo number_format($rowcorte->tarjetasfinal, 2, ".", ","); ?></td>
               </tr>
-              <?php endif; ?>
+              <?php endif; ?> -->
             </tbody>
           </table>
 
