@@ -212,6 +212,11 @@ class CorteModel extends CI_Model
 	   $this->db->where("id_sucursal",$id_sucursal);
 		$this->db->where('fecha', $fecha);
 		$this->db->where('vigente', '1');
+		// Para hacer pruebas de un corte de caja de cierto dia, buscamos la apertura
+		// de ese dia, y quemamos el id de apertura aca para que la funcion nos devuelva
+		// la apertura de ese dia
+		
+		// $this->db->where('id_apertura', '2743');
 		// $this->db->where('id_apertura', '2739');
 		$query = $this->db->get("apertura_caja");
 		if ($query->num_rows() > 0) {

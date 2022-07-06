@@ -271,8 +271,18 @@ class Corte extends CI_Controller {
 				//Datos extra que verifican el estado de Apertura
 				$id_usuario = $this->session->id_usuario;
 				$id_sucursal = $this->session->id_sucursal;
-				$fecha = date('Y-m-d'); //'2019-01-01';
-				$hora_actual= date("H:i:s");	//'00:00:00';
+				
+				// En caso de necesitar hacer pruebas de un corte de caja,
+				// solo cambiamos la fecha por la de el dia de ese corte
+				// la hora se deja a las 8 pm para que traiga todas las ventas desde la hora
+				// de apertura hasta las 8 pm
+
+				// Tambien se debe quemar el id de apertura de ese dia en CorteModel -> get_cajas_activa_sucursal()
+				// $fecha = '2022-07-06';
+				// $fecha = '2022-07-04';
+				// $hora_actual= '20:00:00'; // hora de apertura de caja, 8 pm
+				$fecha = date('Y-m-d');
+				$hora_actual= date("H:i:s");
 				//$row_ap = $this->corte->get_caja_activa($id_usuario,$fecha);
 
 				$row_ap = $this->corte->get_cajas_activa_sucursal($id_sucursal,$fecha);
@@ -548,7 +558,7 @@ class Corte extends CI_Controller {
 			$total_retencion=$this->input->post("total_retencion");
 			$total_dev=$this->input->post("total_dev");
 			$total_efectivo_fin=$this->input->post("total_efectivo_fin");
-			$total_tarjeta_fin=$this->input->post("total_tarjeta_fin");
+			// $total_tarjeta_fin=$this->input->post("total_tarjeta_fin");
 			$total_entrada_caja=$this->input->post("total_entrada_caja");
 			$total_salida_caja=$this->input->post("total_salida_caja");
 			$total_efectivo=$this->input->post("total_efectivo");
@@ -600,7 +610,7 @@ class Corte extends CI_Controller {
 				'diferencia' => $diferencia_val,
 				'totalgral' => $total_fin,
 				'cashfinal' => $total_efectivo,
-				'tarjetasfinal' => $total_tarjeta_fin,
+				// 'tarjetasfinal' => $total_tarjeta_fin,
 				'cashinicial' => $monto_apertura,
 				'tipo_corte' => $tipo_corte,
 				//'vtaefectivo' => $total_contado, //pendiente e importante facturar tipo pago
