@@ -19,6 +19,30 @@ class Ventas extends CI_Controller {
 		$this->load->model("InventarioModel","inventario");
 	//	$this->load->helper('print_helper');
 	}
+
+	// cambios 7-7-2022
+	private function getTipoPago(string $tipo){
+		$result = "";
+		switch ($tipo) {
+			case 'CON':
+				$result = ' <span class="badge badge-primary">' . $tipo . '</span>';
+				break;
+			
+			case 'TAR':
+				$result = ' <span class="badge badge-success">' . $tipo . '</span>';
+				break;
+
+			case 'CRE':
+				$result = ' <span class="badge badge-info">' . $tipo . '</span>';
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+
+		return $result;
+	}
 	/*********************************************************/
 	/*********************************************************/
 	/************************CARGAS***************************/
@@ -66,9 +90,8 @@ class Ventas extends CI_Controller {
 			"table"=>array(
 				"Id"=>5,
 				"Fecha"=>5,
-				"Cliente"=>15,
+				"Cliente"=>20,
 				"Total $"=>10,
-				"Pago"=>5, //metodo de pago
 				"Tipo"=>10,
 				"Estado"=>5,
 				"Detalle"=>35,
@@ -110,9 +133,8 @@ class Ventas extends CI_Controller {
 			0 => 'v.id_venta',
 			1 => 'v.fecha',
 			2 => 'c.nombre',
-			3 => 'tp.alias_tipopago',
-			4 => 't.nombredoc',
-			5 => 'v.total',
+			3 => 't.nombredoc',
+			4 => 'v.total',
 		);
 		if (!isset($valid_columns[$col])) {
 			$order = null;
@@ -152,8 +174,8 @@ class Ventas extends CI_Controller {
 					$rows->fecha,
 					$rows->nombre,
 					$rows->total,
-					$rows->alias_tipopago,
-					$rows->nombredoc,
+					// cambios 7-7-2022
+					$rows->nombredoc . $this->getTipoPago($rows->alias_tipopago),
 					$rows->descripcion,
 					$detalleV->detalle_v,
 					$menudrop,
@@ -171,7 +193,6 @@ class Ventas extends CI_Controller {
 				"",
 				"",
 				"No se encontraron registros",
-				"",
 				"",
 				"",
 				"",
@@ -842,7 +863,7 @@ class Ventas extends CI_Controller {
 						$correlativo1 = $this->ventas->update_correlative('ccf',$correlativo,$id_sucursal);
 						break;
 		 }
-		// FIX: se corrigio la fecha de apertura para que siempre tome la apertura de caja acutal
+
 		 $row_ap = $this->ventas->get_caja_activa($id_sucursal,$id_usuario,$fechahoy);
 		 $id_apertura=$row_ap->id_apertura;
 		 $caja=$row_ap->caja;
@@ -952,7 +973,6 @@ class Ventas extends CI_Controller {
 
 	//finalizar por referencia o facturar Directo
 	function fin_fact($id=-1){
-		$fechahoy=date('Y-m-d');
 		if($this->input->method(TRUE) == "POST"){
 
 			$id_venta = $this->input->post("id_venta");
@@ -969,7 +989,7 @@ class Ventas extends CI_Controller {
 				$tipodoc= $this->input->post("tipodoc");
 				$id_usuario = $this->session->id_usuario;
 				$hora = date("H:i:s");
-				
+				$fechahoy=date('Y-m-d');
 				$fecha_corr=$this->ventas->get_date_correlative($id_sucursal);
 
 				$row_ap = $this->ventas->get_caja_activa($id_sucursal,$id_usuario,$fechahoy);
@@ -993,7 +1013,7 @@ class Ventas extends CI_Controller {
 			 }
 
 				$data = array(
-					'fecha' => $fecha,
+					'fecha' => $fechahoy,
 					'hora' => $hora,
 					'concepto' => "FINALIZADA REF",
 					'indicaciones' => "FINALIZADA REF",
@@ -1107,7 +1127,7 @@ class Ventas extends CI_Controller {
 							$correlativo1 = $this->ventas->update_correlative('ccf',$correlativo,$id_sucursal);
 							break;
 			 }
-			 $row_ap = $this->ventas->get_caja_activa($id_sucursal,$id_usuario,$fechahoy);
+			 $row_ap = $this->ventas->get_caja_activa($id_sucursal,$id_usuario,$fecha);
 			 $id_apertura=$row_ap->id_apertura;
 			 $caja=$row_ap->caja;
 
@@ -1234,7 +1254,7 @@ class Ventas extends CI_Controller {
 			$nomcomer= $this->input->post("nombre_cliente");
 			$correlativo= $this->input->post("numero_doc");
 			$tipo_pago= $this->input->post("tipo_pago");
-		  	$efectivo = $this->input->post("efectivo");
+		  $efectivo = $this->input->post("efectivo");
 			$direccion="EL SALVADOR";
 			$id_sucursal=$this->session->id_sucursal;
 			$id_usuario=$this->session->id_usuario;

@@ -184,7 +184,6 @@ class CorteModel extends CI_Model
 		$this->db->select_sum("valor");
 		$this->db->where("id_sucursal",$id_sucursal);
 		//$this->db->where("id_apertura",$id_apertura);
-		// If it is anulated then it does not come to the sum
 		$this->db->where("anulado",0);
 		$this->db->where($tipo_mov,1);
 		$this->db->where("fecha",$fecha_apertura);
@@ -209,15 +208,12 @@ class CorteModel extends CI_Model
 		}
 	}
 	function get_cajas_activa_sucursal($id_sucursal,$fecha){
+		// Para depurar un corte de caja, cambiamos los selectores por
+		// uno que elija el id de apertura, asi:
+		// $this->db->where("id_apertura",12345);
 	   $this->db->where("id_sucursal",$id_sucursal);
 		$this->db->where('fecha', $fecha);
 		$this->db->where('vigente', '1');
-		// Para hacer pruebas de un corte de caja de cierto dia, buscamos la apertura
-		// de ese dia, y quemamos el id de apertura aca para que la funcion nos devuelva
-		// la apertura de ese dia
-		
-		// $this->db->where('id_apertura', '2743');
-		// $this->db->where('id_apertura', '2739');
 		$query = $this->db->get("apertura_caja");
 		if ($query->num_rows() > 0) {
 			return $query->row();

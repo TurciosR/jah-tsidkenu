@@ -25,12 +25,13 @@ class VentasModel extends CI_Model
 			}
 		}
 		$this->db->select("v.requiere_imei,v.imei_ingresado,v.id_venta,v.id_estado,
-		DATE_FORMAT(v.fecha,'%d-%m-%Y') as fecha, FORMAT(v.total,2) as total, v.tipo_pago, v.guia,
-		 c.nombre, e.descripcion, t.nombredoc,v.tipo_doc, tp.alias_tipopago");
+		DATE_FORMAT(v.fecha,'%d-%m-%Y') as fecha, FORMAT(v.total,2) as total, v.guia,
+		 c.nombre, e.descripcion, t.nombredoc,v.tipo_doc, tp.alias_tipopago"); // cambios 7-7-2022
 		$this->db->from('ventas as v');
 		$this->db->join('clientes as c', 'v.id_cliente = c.id_cliente', 'left');
 		$this->db->join('estado as e', 'v.id_estado = e.id_estado', 'left');
 		$this->db->join('tipodoc as t', 'v.tipo_doc = t.idtipodoc', 'left');
+		// cambios 7-7-2022
 		$this->db->join('tipo_pago as tp', 'v.tipo_pago = tp.id_tipopago', 'left');
 		$this->db->where("v.id_sucursal",$id_sucursal);
 		$this->db->limit($length, $start);

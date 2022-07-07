@@ -70,6 +70,8 @@ class Dashboard extends CI_Controller {
 		//$this->db->where("ventas.tipo_doc", "1");
 		$this->db->where("ventas.credito", "0");
 		$this->db->where("ventas.tipo_pago", "1");
+		// cambios 7-7-2022
+		$this->db->where("ventas.tipo_doc !=","4");
 		$this->db->where("ventas.id_sucursal", $id_sucursal);
 		$this->db->select("SUM(ventas.total) as total_ventas");
 		$this->db->from("ventas");

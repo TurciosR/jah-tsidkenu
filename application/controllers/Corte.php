@@ -255,14 +255,6 @@ class Corte extends CI_Controller {
 		exit();
 	}
 
-// TODO: Almacenar el dinero que entra en tarjetas de debito / credito en alguna parte
-// Ademas mostrar tambien las salidas de dinero en devoluciones en el modal de detalles
-// El total final de efectivo se calcula asi
-// Total Docs + Total Entradas - Total salidas - Total devoluciones
-
-// Por ello si se registra primero una venta con tarjeta y despues una devolucion, siempre
-// faltara en caja la cantidad de la devolucion por el hecho de que el dinero que entro por
-// tarjeta no se suma a la caja, sin embargo el dinero que sale si se resta de caja
 	function corte_caja_diario(){
 		//Falta agregar ventas en efectivo o tarjeta en el form facturacion, asi como
 		//impresion de ticket de corte,  enform de facturas revision de F3 factura para cambiar codigo
@@ -271,20 +263,15 @@ class Corte extends CI_Controller {
 				//Datos extra que verifican el estado de Apertura
 				$id_usuario = $this->session->id_usuario;
 				$id_sucursal = $this->session->id_sucursal;
-				
-				// En caso de necesitar hacer pruebas de un corte de caja,
-				// solo cambiamos la fecha por la de el dia de ese corte
-				// la hora se deja a las 8 pm para que traiga todas las ventas desde la hora
-				// de apertura hasta las 8 pm
-
-				// Tambien se debe quemar el id de apertura de ese dia en CorteModel -> get_cajas_activa_sucursal()
-				// $fecha = '2022-07-06';
-				// $fecha = '2022-07-04';
-				// $hora_actual= '20:00:00'; // hora de apertura de caja, 8 pm
+				// GUIA PARA DEPURAR CORTES DE CAJA
+				// Cambiamos la fecha a la fecha del corte que queremos depurar
+				// cambiamos hora actual por las 20:00:00
+				// continue leyendo
 				$fecha = date('Y-m-d');
 				$hora_actual= date("H:i:s");
 				//$row_ap = $this->corte->get_caja_activa($id_usuario,$fecha);
 
+				// Buscamos esta funcion en el modelo corte, y quemamos la apertura del dia deseado
 				$row_ap = $this->corte->get_cajas_activa_sucursal($id_sucursal,$fecha);
 
 
@@ -299,23 +286,17 @@ class Corte extends CI_Controller {
 
 					$id_estado=2; //venta finalizada
 					//ejecutar solicitud de min y macx correlativos para enviarlos a la vista de corte , de ticket. ccf, y cof
-					// solo cambia el ultimo parametro que distingue entre ticket, factura y factura credito fiscal
 					$ticket_row=$this->corte->get_consolidate($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,1);
 					$cof_row=$this->corte->get_consolidate($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,2);
 					$ccf_row=$this->corte->get_consolidate($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,3);
-					
-					// lo mismo que arriba pero para obtener el numero de cada uno (?)
-					$count_row_tik=$this->corte->get_total_num_docs($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,1);
+			    $count_row_tik=$this->corte->get_total_num_docs($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,1);
 					$count_row_cof=$this->corte->get_total_num_docs($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,2);
 		 			$count_row_ccf=$this->corte->get_total_num_docs($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,3);
-					
-					// lo mismo que arriba pero para obtener los totales de cada uno (?)
 					$total_row_tik=$this->corte->get_total_dinero_corte($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,1,"total");
 					$total_row_cof=$this->corte->get_total_dinero_corte($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,2,"total");
 					$total_row_ccf=$this->corte->get_total_dinero_corte($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,3,"total");
 					$total_row_dev=$this->corte->get_total_dinero_corte($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,4,"total");
 					$total_row_ret=$this->corte->get_total_dinero_corte($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,$id_estado,3,"retencion");
-					
 					//echo "id sucursal: ".$id_sucursal.", fecha apertura: ".$fecha_apertura.", hora ap: ".$hora_ap.", hora actual: ".$hora_actual.", id apertura: ".$id_apertura;
 					$row_entrada_caja=$this->corte->get_total_mov_caja($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,"entrada");
 					$row_salida_caja=$this->corte->get_total_mov_caja($id_sucursal,$fecha_apertura,$hora_ap,$hora_actual,$id_apertura,"salida");
@@ -328,42 +309,27 @@ class Corte extends CI_Controller {
 						"id_estado"=>$id_estado,
 						"fecha"=>$fecha_apertura,
 					);
-					// primero sacamos los tickets
 					$where_val["tipo_doc"] = 1;
-					
 					$where_val['tipo_pago']=1;
 					$count_rango_efectivo_tik= $this->corte->get_total_docs_tp($hora_ap,$hora_actual,$valor,$where_val);
 					$ticket_rowmm_efectivo=$this->corte->get_max_min_corr($hora_ap,$hora_actual,$valor,$where_val);
-					
-					// aca sacamos algunos tickets que fueron generados por un pago con tarjeta
 					$where_val['tipo_pago']=2;
 					$count_rango_tarjeta_tik= $this->corte->get_total_docs_tp($hora_ap,$hora_actual,$valor,$where_val);
 					$ticket_rowmm_tarjeta=$this->corte->get_max_min_corr($hora_ap,$hora_actual,$valor,$where_val);
-					
-					// facturas de consumidor final
 					$where_val["tipo_doc"] = 2;
-					
 					$where_val['tipo_pago']=1;
 					$count_rango_efectivo_cof= $this->corte->get_total_docs_tp($hora_ap,$hora_actual,$valor,$where_val);
 					$cof_rowmm_efectivo=$this->corte->get_max_min_corr($hora_ap,$hora_actual,$valor,$where_val);
-					
-					// generadas por pago con tarjeta
 					$where_val['tipo_pago']=2;
 					$count_rango_tarjeta_cof= $this->corte->get_total_docs_tp($hora_ap,$hora_actual,$valor,$where_val);
 					$cof_rowmm_tarjeta=$this->corte->get_max_min_corr($hora_ap,$hora_actual,$valor,$where_val);
-					
-					// facturas de credito fiscal
 					$where_val["tipo_doc"] = 3;
-					
 					$where_val['tipo_pago']=1;
 					$count_rango_efectivo_ccf= $this->corte->get_total_docs_tp($hora_ap,$hora_actual,$valor,$where_val);
 					$ccf_rowmm_efectivo=$this->corte->get_max_min_corr($hora_ap,$hora_actual,$valor,$where_val);
-					
-					// generadas por pago con tarjeta
 					$where_val['tipo_pago']=2;
 					$count_rango_tarjeta_ccf= $this->corte->get_total_docs_tp($hora_ap,$hora_actual,$valor,$where_val);
 					$ccf_rowmm_tarjeta=$this->corte->get_max_min_corr($hora_ap,$hora_actual,$valor,$where_val);
-					
 					//total efectivo desde metodo modificado en model
 					$where_array=array(
 					 "id_sucursal" => $id_sucursal,
@@ -371,38 +337,24 @@ class Corte extends CI_Controller {
 						"id_estado"=>$id_estado,
 					);
 
-					// tickets
 					$where_array["tipo_doc"] = 1;
-
 					$where_array['tipo_pago']=1; //($hora_ap,$hora_actual,$valor,$where)
 					$total_efectivo_tik= $this->corte->get_totales_dinero_corte($hora_ap,$hora_actual,"total",$where_array);
-					
-					// tarjeta de debito / credito
 					$where_array['tipo_pago']=2;
 					$total_tarjeta_tik= $this->corte->get_totales_dinero_corte($hora_ap,$hora_actual,"total",$where_array);
-					
-					// facturas consumidor final
 					$where_array["tipo_doc"] = 2;
-					
 					$where_array['tipo_pago']=1;
 					$total_efectivo_cof= $this->corte->get_totales_dinero_corte($hora_ap,$hora_actual,"total",$where_array);
-					
-					// tarjeta
 					$where_array['tipo_pago']=2;
 					$total_tarjeta_cof= $this->corte->get_totales_dinero_corte($hora_ap,$hora_actual,"total",$where_array);
 
-					// facturas credito fiscal
 					$where_array["tipo_doc"] = 3;
-					
 					$where_array['tipo_pago']=1;
 					$total_efectivo_ccf= $this->corte->get_totales_dinero_corte($hora_ap,$hora_actual,"total",$where_array);
-					
-					// tarjeta
 					$where_array['tipo_pago']=2;
 					$total_tarjeta_ccf= $this->corte->get_totales_dinero_corte($hora_ap,$hora_actual,"total",$where_array);
 
 					$total_efectivo_fin=$total_efectivo_tik+$total_efectivo_cof+$total_efectivo_ccf+$monto_apertura;
-					// total tarjeta
 					$total_tarjeta_fin=$total_tarjeta_tik+$total_tarjeta_cof+$total_tarjeta_ccf;
 
 					$total_corte=$monto_apertura;
@@ -533,8 +485,7 @@ class Corte extends CI_Controller {
 						$agent = $this->agent->browser().' '.$this->agent->version();
 						$opsys = $this->agent->platform();
 				}
-			// TODO: estudiar el codigo, para ver si no se inserta desde aca el
-			// total de dinero que entro por tarjetas de credito
+
 			//datos POST para corte o cierre
 			$id_usuario_corte=$this->input->post("id_usuario");
 			$tipo_corte=$this->input->post("tipo_corte");
@@ -558,7 +509,6 @@ class Corte extends CI_Controller {
 			$total_retencion=$this->input->post("total_retencion");
 			$total_dev=$this->input->post("total_dev");
 			$total_efectivo_fin=$this->input->post("total_efectivo_fin");
-			// $total_tarjeta_fin=$this->input->post("total_tarjeta_fin");
 			$total_entrada_caja=$this->input->post("total_entrada_caja");
 			$total_salida_caja=$this->input->post("total_salida_caja");
 			$total_efectivo=$this->input->post("total_efectivo");
@@ -600,7 +550,7 @@ class Corte extends CI_Controller {
 				'cffinal' => $ccf_max,
 				'totalnocf' => $ccf_count,
 				'totalcf' => $ccf_total,//datos ccf
-	      		'cfgravado' =>  $ccf_total,//datos ccf
+	      'cfgravado' =>  $ccf_total,//datos ccf
 				'vales'=> $total_salida_caja,
 				'ingresos'=> $total_entrada_caja,
 				'hora_corte' => $hora_actual,
@@ -610,7 +560,6 @@ class Corte extends CI_Controller {
 				'diferencia' => $diferencia_val,
 				'totalgral' => $total_fin,
 				'cashfinal' => $total_efectivo,
-				// 'tarjetasfinal' => $total_tarjeta_fin,
 				'cashinicial' => $monto_apertura,
 				'tipo_corte' => $tipo_corte,
 				//'vtaefectivo' => $total_contado, //pendiente e importante facturar tipo pago
