@@ -42,6 +42,7 @@ class VentasModel extends CI_Model
 			return 0;//$this->db->last_query();
 		}
 	}
+	
 	function total_rows(){
 		$clients = $this->db->get("ventas");
 		if ($clients->num_rows() > 0) {

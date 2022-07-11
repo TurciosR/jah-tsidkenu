@@ -25,15 +25,15 @@ class Ventas extends CI_Controller {
 		$result = "";
 		switch ($tipo) {
 			case 'CON':
-				$result = ' <span class="badge badge-primary">' . $tipo . '</span>';
+				$result = ' <span class="badge badge-primary"><span class="mdi mdi-currency-usd"></span> ' . $tipo . '</span>';
 				break;
 			
 			case 'TAR':
-				$result = ' <span class="badge badge-success">' . $tipo . '</span>';
+				$result = ' <span class="badge badge-success"><span class="mdi mdi-credit-card"></span> ' . $tipo . '</span>';
 				break;
 
 			case 'CRE':
-				$result = ' <span class="badge badge-info">' . $tipo . '</span>';
+				$result = ' <span class="badge badge-info"><span class="mdi mdi-calendar-clock"></span> ' . $tipo . '</span>';
 				break;
 			
 			default:
