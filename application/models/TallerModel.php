@@ -25,7 +25,7 @@ class TallerModel extends CI_Model
 			}
 		}
 		$this->db->select("v.requiere_imei,v.imei_ingresado,v.id_trabajo_taller,v.id_estado,
-		DATE_FORMAT(v.fecha,'%d-%m-%Y') as fecha, FORMAT(v.total,2) as total, v.guia,
+		DATE_FORMAT(v.fecha,'%d-%m-%Y') as fecha, FORMAT(v.total,2) as total, v.guia, v.concepto,
 		 c.nombre, e.descripcion, t.nombredoc,v.tipo_doc, tp.alias_tipopago"); // cambios 7-7-2022
 		$this->db->from('trabajos_taller as v');
 		$this->db->join('clientes as c', 'v.id_cliente = c.id_cliente', 'left');
@@ -526,30 +526,30 @@ function get_tipodoc_alias($alias){
     }
   }
 }
-function get_one_row_limit($tabla,$where){
-	foreach ($where as $key => $value) {
-		// code...
-		$this->db->where($key, $value);
-	}
-	$this->db->limit(1);
-	$data = $this->db->get($tabla);
-	if ($data->num_rows() > 0) {
-		return $data->row();
-	} else {
-		return 0;
-	}
-}
-function get_apertura_activa($caja,$fecha){
-	$this->db->where("caja",$caja);
-	$this->db->where('fecha', $fecha);
-	$this->db->order_by('id_apertura',"DESC");
-	$this->db->limit(1);
-	$query = $this->db->get("apertura_caja");
-	if ($query->num_rows() > 0) {
-		return $query->row();
-	}
-	else {
-		return NULL;
-	}
-}
+// function get_one_row_limit($tabla,$where){
+// 	foreach ($where as $key => $value) {
+// 		// code...
+// 		$this->db->where($key, $value);
+// 	}
+// 	$this->db->limit(1);
+// 	$data = $this->db->get($tabla);
+// 	if ($data->num_rows() > 0) {
+// 		return $data->row();
+// 	} else {
+// 		return 0;
+// 	}
+// }
+// function get_apertura_activa($caja,$fecha){
+// 	$this->db->where("caja",$caja);
+// 	$this->db->where('fecha', $fecha);
+// 	$this->db->order_by('id_apertura',"DESC");
+// 	$this->db->limit(1);
+// 	$query = $this->db->get("apertura_caja");
+// 	if ($query->num_rows() > 0) {
+// 		return $query->row();
+// 	}
+// 	else {
+// 		return NULL;
+// 	}
+// }
 /* End of file trabajos_tallerModel.php */

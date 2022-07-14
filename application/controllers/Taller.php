@@ -16,7 +16,8 @@ class Taller extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('UtilsModel', "utils");
-		$this->load->model("TallerModel", "ventas");
+		$this->load->model("TallerModel", "taller");
+		$this->load->model("VentasModel", "ventas");
 		$this->load->model("Clientes_model", "clientes");
 		$this->load->library('user_agent');
 		$this->load->model("InventarioModel", "inventario");
@@ -56,25 +57,25 @@ class Taller extends CI_Controller
 	{
 		$id_usuario = $this->session->id_usuario;
 		$id_sucursal = $this->session->id_sucursal;
-		$usuario_tipo =	$this->ventas->get_one_row("usuario", array('id_usuario' => $id_usuario,));
+		$usuario_tipo =	$this->taller->get_one_row("usuario", array('id_usuario' => $id_usuario,));
 		if ($usuario_tipo != NULL) {
 			if ($usuario_tipo->admin == 1 || $usuario_tipo->super_admin == 1) {
-				$sucursales = $this->ventas->get_detail_rows("sucursales", array('1' => 1,));
+				$sucursales = $this->taller->get_detail_rows("sucursales", array('1' => 1,));
 			} else {
-				$sucursales = $this->ventas->get_detail_rows("sucursales", array('id_sucursal' => $id_sucursal,));
+				$sucursales = $this->taller->get_detail_rows("sucursales", array('id_sucursal' => $id_sucursal,));
 			}
 		} else {
-			$sucursales = $this->ventas->get_detail_rows("sucursales", array('1' => 1,));
+			$sucursales = $this->taller->get_detail_rows("sucursales", array('1' => 1,));
 		}
 
 		$data = array(
-			"titulo" => "Taller",
-			"icono" => "mdi mdi-cart",
+			"titulo" => "Trabajos en taller",
+			"icono" => "mdi mdi-cogs",
 			"buttons" => array(
 				0 => array(
 					"icon" => "mdi mdi-plus",
 					'url' => 'taller/agregar',
-					'txt' => ' Nueva Venta',
+					'txt' => ' Nuevo trabajo de taller',
 					'modal' => false,
 				),
 			),
@@ -94,9 +95,9 @@ class Taller extends CI_Controller
 			"table" => array(
 				"Id" => 5,
 				"Fecha" => 5,
-				"Cliente" => 20,
-				"Total $" => 10,
-				"Tipo" => 10,
+				"Cliente" => 15,
+				"Concepto" => 35,
+				"Total" => 8,
 				"Estado" => 5,
 				"Detalle" => 35,
 				"Acciones" => 10,
@@ -137,7 +138,7 @@ class Taller extends CI_Controller
 			0 => 'v.id_trabajo_taller',
 			1 => 'v.fecha',
 			2 => 'c.nombre',
-			3 => 't.nombredoc',
+			3 => 'v.concepto',
 			4 => 'v.total',
 		);
 		if (!isset($valid_columns[$col])) {
@@ -146,21 +147,21 @@ class Taller extends CI_Controller
 			$order = $valid_columns[$col];
 		}
 
-		$row = $this->ventas->get_collection($order, $search, $valid_columns, $length, $start, $dir, $id_sucursal);
+		$row = $this->taller->get_collection($order, $search, $valid_columns, $length, $start, $dir, $id_sucursal);
 		if ($row != 0) {
 			$data = array();
 			foreach ($row as $rows) {
 				//procedemos a obtener el detalle de la venta
-				$detalleV = $this->ventas->get_detalle_venta($rows->id_trabajo_taller);
+				$detalleV = $this->taller->get_detalle_venta($rows->id_trabajo_taller);
 				$menudrop = "<div class='btn-group'>
 				<button data-toggle='dropdown' class='btn btn-success dropdown-toggle' aria-expanded='false'><i class='mdi mdi-menu' aria-haspopup='false'></i> Menu</button>
 				<ul class='dropdown-menu dropdown-menu-right' x-placement='bottom-start'>";
 				$filename = base_url("taller/editar/");
 				$icon = "mdi mdi-toggle-switch";
-				if ($rows->id_estado == 1) {
-					$menudrop .= "<li><a role='button' href='" . $filename . $rows->id_trabajo_taller . "' ><i class='mdi mdi-square-edit-outline' ></i> Editar</a></li>";
+				if ($rows->id_estado == 4) {
+					$menudrop .= "<li><a role='button' href='" . $filename . $rows->id_trabajo_taller . "' ><i class='mdi mdi-square-edit-outline' ></i> Actualizar</a></li>";
 					$filename = base_url("taller/finalizar/");
-					$menudrop .= "<li><a role='button' href='" . $filename . $rows->id_trabajo_taller . "' ><i class='mdi mdi-square-edit-outline' ></i> Finalizar</a></li>";
+					$menudrop .= "<li><a role='button' href='" . $filename . $rows->id_trabajo_taller . "' ><i class='mdi mdi-receipt' ></i> Facturar</a></li>";
 					$menudrop .= "<li><a  class='delete_row'  id=" . $rows->id_trabajo_taller . " ><i class='mdi mdi-trash-can-outline'></i> Eliminar</a></li>";
 					$menudrop .= "<li><a  class='state_change'  data-state='Anular'  id=" . $rows->id_trabajo_taller . " ><i class='$icon'></i> Anular</a></li>";
 				}
@@ -177,15 +178,14 @@ class Taller extends CI_Controller
 					$rows->id_trabajo_taller,
 					$rows->fecha,
 					$rows->nombre,
-					$rows->total,
-					// cambios 7-7-2022
-					$rows->nombredoc . $this->getTipoPago($rows->alias_tipopago),
+					$rows->concepto,
+					'$ '.$rows->total,
 					$rows->descripcion,
 					$detalleV->detalle_v,
 					$menudrop,
 				);
 			}
-			$total = $this->ventas->total_rows();
+			$total = $this->taller->total_rows();
 			$output = array(
 				"draw" => $draw,
 				"recordsTotal" => $total,
@@ -218,9 +218,9 @@ class Taller extends CI_Controller
 	{
 		if ($this->input->method(TRUE) == "GET") {
 			$id = $this->uri->segment(3);
-			//$rowvta = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
-			$rows = $this->ventas->get_detail_ci($id);
-			$rowserv = $this->ventas->get_detail_serv($id);
+			//$rowvta = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$rows = $this->taller->get_detail_ci($id);
+			$rowserv = $this->taller->get_detail_serv($id);
 			//if($rows && $id!=""){
 			if ($id != "") {
 				$data = array(
@@ -248,8 +248,8 @@ class Taller extends CI_Controller
 
 			$response = $this->utils->update("trabajos_taller", $data, $where);
 			//
-			$detalles = $this->ventas->get_detail_ci($id);
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$detalles = $this->taller->get_detail_ci($id);
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
 			//procedemos a realizar la carga del inventario
 			$correlativo = $this->inventario->get_max_correlative('ci', $row->id_sucursal);
 			$id_usuario = $this->session->id_usuario;
@@ -290,7 +290,7 @@ class Taller extends CI_Controller
 					$id_detalle = $this->inventario->inAndCon('inventario_carga_detalle', $form_data);
 
 					if ($detalle->tipo_prod == 0) {
-						$stock_data = $this->ventas->get_stock($id_producto, $detalle->id_color, $id_sucursal);
+						$stock_data = $this->taller->get_stock($id_producto, $detalle->id_color, $id_sucursal);
 						$newstock = ($stock_data->cantidad) + $cantidad;
 						$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 					}
@@ -315,8 +315,8 @@ class Taller extends CI_Controller
 	{
 		if ($this->input->method(TRUE) == "GET") {
 			$id = $this->uri->segment(3);
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
-			$rows = $this->ventas->get_detail_rows("estado", array('1' => 1,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$rows = $this->taller->get_detail_rows("estado", array('1' => 1,));
 			if ($rows && $id != "") {
 				$data = array(
 					"row" => $row,
@@ -333,13 +333,13 @@ class Taller extends CI_Controller
 		if ($this->input->method(TRUE) == "GET") {
 			$id = $this->uri->segment(3);
 			$giro = $this->clientes->get_giro();
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
-			$rowcte = $this->ventas->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$rowcte = $this->taller->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
 			//$id_cliente=$row->id_cliente;
-			$row_tipopago = $this->ventas->get_detail_rows("tipo_pago", array('null' => -1,));
+			$row_tipopago = $this->taller->get_detail_rows("tipo_pago", array('null' => -1,));
 
 			//Procedemos a obtener los datos de los vendedores
-			$vendedores = $this->ventas->get_detail_rows("usuario", array('id_rol' => '1',));
+			$vendedores = $this->taller->get_detail_rows("usuario", array('id_rol' => '1',));
 
 			if ($row && $id != "") {
 				$data = array(
@@ -349,7 +349,7 @@ class Taller extends CI_Controller
 					"vendedores" => $vendedores,
 					"tipo_pago" => $row_tipopago,
 				);
-				$this->load->view("ventas/data_client.php", $data);
+				$this->load->view("taller/data_client.php", $data);
 			} else {
 				redirect('errorpage');
 			}
@@ -362,17 +362,17 @@ class Taller extends CI_Controller
 			$fecha = date('Y-m-d');
 			$id_usuario = $this->session->id_usuario;
 			$id_sucursal = $this->session->id_sucursal;
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$usuario_ap = NULL;
 			if ($row_ap != NULL) {
 				$id_apertura = $row_ap->id_apertura;
-				$usuario_ap =	$this->ventas->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
+				$usuario_ap =	$this->taller->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
 			}
-			$row_clientes = $this->ventas->get_detail_rows("clientes", array('activo' => 1, 'deleted' => 0,)); //
-			$row_client_select = $this->ventas->get_one_row("clientes", array('activo' => 1, 'deleted' => 0,));
+			$row_clientes = $this->taller->get_detail_rows("clientes", array('activo' => 1, 'deleted' => 0,)); //
+			$row_client_select = $this->taller->get_one_row("clientes", array('activo' => 1, 'deleted' => 0,));
 			//fin apertura caja
 			$data = array(
-				"sucursal" => $this->ventas->get_detail_rows("sucursales", array('1' => 1,)),
+				"sucursal" => $this->taller->get_detail_rows("sucursales", array('1' => 1,)),
 				"id_sucursal" => $this->session->id_sucursal,
 				"row_clientes" => $row_clientes,
 				"id_usuario" => $id_usuario,
@@ -390,7 +390,7 @@ class Taller extends CI_Controller
 				),
 			);
 
-			layout("ventas/guardar", $data, $extras);
+			layout("taller/guardar", $data, $extras);
 		} else if ($this->input->method(TRUE) == "POST") {
 			$this->load->model("ProductosModel", "productos");
 			$this->utils->begin();
@@ -403,10 +403,10 @@ class Taller extends CI_Controller
 			$id_usuario = $this->session->id_usuario;
 			$hora = date("H:i:s");
 
-			$correlativo = $this->ventas->get_max_correlative('ven', $id_sucursal);
-			$fecha_corr = $this->ventas->get_date_correlative($id_sucursal);
+			$correlativo = $this->taller->get_max_correlative('ven', $id_sucursal);
+			$fecha_corr = $this->taller->get_date_correlative($id_sucursal);
 			if ($fecha == $fecha_corr) {
-				$referencia = $this->ventas->get_correlative('refdia', $id_sucursal);
+				$referencia = $this->taller->get_correlative('refdia', $id_sucursal);
 				$this->utils->update("correlativo", array("refdia" => $referencia,), "id_sucursal=" . $id_sucursal);
 			} else {
 				$referencia = 1;
@@ -416,9 +416,9 @@ class Taller extends CI_Controller
 				'fecha' => $fecha,
 				'hora' => $hora,
 				'concepto' => $concepto,
-				'indicaciones' => "AGREGAR VENTA",
+				'indicaciones' => "TRABAJO EN TALLER",
 				'id_cliente' => $id_cliente,
-				'id_estado' => 1,
+				'id_estado' => 4,
 				'id_sucursal_despacho' => $id_sucursal,
 				'referencia' => $referencia,
 				'correlativo' => $correlativo,
@@ -432,7 +432,7 @@ class Taller extends CI_Controller
 
 			$imei_required = false;
 
-			$id_trabajo_taller = $this->ventas->inAndCon('trabajos_taller', $data);
+			$id_trabajo_taller = $this->taller->inAndCon('trabajos_taller', $data);
 			if ($id_trabajo_taller != NULL) {
 				if ($data_ingreso != NULL) {
 					foreach ($data_ingreso as $fila) {
@@ -461,16 +461,16 @@ class Taller extends CI_Controller
 							'subtotal' => $subtotal,
 							'condicion' => $estado,
 							'tipo_prod' => $tipo,
-							'garantia' =>  $this->ventas->getGarantia($id_producto, $estado),
+							'garantia' =>  $this->taller->getGarantia($id_producto, $estado),
 							'id_precio_producto' => $id_precio,
 						);
-						$id_detalle = $this->ventas->inAndCon('trabajos_taller_detalle', $form_data);
-						$stock_data = $this->ventas->get_stock($id_producto, $color, $id_sucursal);
+						$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
+						$stock_data = $this->taller->get_stock($id_producto, $color, $id_sucursal);
 						$newstock = ($stock_data->cantidad) - $cantidad;
 						if ($tipo == 0) {
 							$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 						}
-						if ($this->ventas->has_imei_required($id_producto)) {
+						if ($this->taller->has_imei_required($id_producto)) {
 							// code...
 							$imei_required = true;
 						}
@@ -507,21 +507,21 @@ class Taller extends CI_Controller
 			$id_usuario = $this->session->id_usuario;
 			$fecha = date('Y-m-d');
 			$id_sucursal = $this->session->id_sucursal;
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$usuario_ap = NULL;
 			if ($row_ap != NULL) {
 				$id_apertura = $row_ap->id_apertura;
-				$usuario_ap =	$this->ventas->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
+				$usuario_ap =	$this->taller->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
 			}
-			$row_clientes = $this->ventas->get_detail_rows("clientes", array('activo' => 1, 'deleted' => 0,)); //
-			$row_client_select = $this->ventas->get_one_row("clientes", array('activo' => -1, 'deleted' => 0,));
+			$row_clientes = $this->taller->get_detail_rows("clientes", array('activo' => 1, 'deleted' => 0,)); //
+			$row_client_select = $this->taller->get_one_row("clientes", array('activo' => -1, 'deleted' => 0,));
 			//fin apertura caja
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
-			$rowc = $this->ventas->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
-			$rowpc = $this->ventas->get_porcent_client($rowc->clasifica);
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$rowc = $this->taller->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
+			$rowpc = $this->taller->get_porcent_client($rowc->clasifica);
 
-			$detalles = $this->ventas->get_detail_ci($id);
-			$detalleservicios = $this->ventas->get_detail_serv($id);
+			$detalles = $this->taller->get_detail_ci($id);
+			$detalleservicios = $this->taller->get_detail_serv($id);
 
 			$detalles1 = array();
 			if ($detalles != NULL) {
@@ -532,10 +532,10 @@ class Taller extends CI_Controller
 					$precio = $detalle->precio;
 					$qty_sold = $detalle->cantidad;
 					if ($detalle->id_color != -1) {
-						//$precios=$this->ventas->get_detail_rows("producto_precio",array('id_producto' =>$id_producto,'id_listaprecio'=>$clasifica));
-						$precios = $this->ventas->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
+						//$precios=$this->taller->get_detail_rows("producto_precio",array('id_producto' =>$id_producto,'id_listaprecio'=>$clasifica));
+						$precios = $this->taller->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
 
-						$stock_data = $this->ventas->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
+						$stock_data = $this->taller->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
 						//$detalle->precios = $detallesp["precios"];
 						$lista = "";
 						$lista .= "<select class='form-control precios sel' style='width:100%;'>";
@@ -561,7 +561,7 @@ class Taller extends CI_Controller
 						$detalle->id_stock = $stock_data->id_stock;
 						$detalle->id_color = $stock_data->id_color;
 
-						$d = $this->ventas->get_reservado($id_producto, $id, $detalle->id_color);
+						$d = $this->taller->get_reservado($id_producto, $id, $detalle->id_color);
 						$detalle->reservado = $d->reservado;
 
 						$estado = "<select class='est'>";
@@ -586,7 +586,7 @@ class Taller extends CI_Controller
 					"detalles" => $detalles1,
 					"detalleservicios" => $detalleservicios,
 					'rowpc' => $rowpc,
-					"sucursal" => $this->ventas->get_detail_rows("sucursales", array('1' => 1,)),
+					"sucursal" => $this->taller->get_detail_rows("sucursales", array('1' => 1,)),
 					"id_sucursal" => $row->id_sucursal,
 					"rowc" => $rowc,
 					"id_usuario" => $id_usuario,
@@ -622,15 +622,15 @@ class Taller extends CI_Controller
 			$id_sucursal = $this->session->id_sucursal;
 			$hora = date("H:i:s");
 
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 
 			$data = array(
 				'fecha' => $fecha,
 				'hora' => $hora,
 				'concepto' => $concepto,
-				'indicaciones' => "EDITAR VENTA",
+				'indicaciones' => "EDITAR TRABAJO DE TALLER",
 				'id_cliente' => $id_cliente,
-				'id_estado' => 1,
+				'id_estado' => 4,
 				'id_sucursal_despacho' => $id_sucursal,
 				'total' => $total,
 				'id_sucursal' => $id_sucursal,
@@ -645,11 +645,11 @@ class Taller extends CI_Controller
 			$this->utils->update('trabajos_taller', $data, "id_trabajo_taller=$id_trabajo_taller");
 
 			/*Cargo los detalles previos*/
-			$detalles_previos = $this->ventas->get_detail_ci($id_trabajo_taller);
+			$detalles_previos = $this->taller->get_detail_ci($id_trabajo_taller);
 			if ($detalles_previos != NULL) {
 				foreach ($detalles_previos as $key) {
 					if ($key->tipo_prod == 0) {
-						$stock_data = $this->ventas->get_stock($key->id_producto, $key->id_color, $id_sucursal);
+						$stock_data = $this->taller->get_stock($key->id_producto, $key->id_color, $id_sucursal);
 						$newstock = ($stock_data->cantidad) + ($key->cantidad);
 
 						$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
@@ -686,10 +686,10 @@ class Taller extends CI_Controller
 						'subtotal' => $subtotal,
 						'condicion' => $estado,
 						'tipo_prod' => $tipo,
-						'garantia' =>  $this->ventas->getGarantia($id_producto, $estado),
+						'garantia' =>  $this->taller->getGarantia($id_producto, $estado),
 						'id_precio_producto' => $id_precio,
 					);
-					$id_detalle = $this->ventas->inAndCon('trabajos_taller_detalle', $form_data);
+					$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
 					$this->utils->update(
 						"producto",
 						array(
@@ -699,7 +699,7 @@ class Taller extends CI_Controller
 						),
 						"id_producto=$id_producto"
 					);
-					$stock_data = $this->ventas->get_stock($id_producto, $color, $id_sucursal);
+					$stock_data = $this->taller->get_stock($id_producto, $color, $id_sucursal);
 					$newstock = ($stock_data->cantidad) - $cantidad;
 					if ($tipo == 0 && $estado != "SERVICIO") {
 						$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
@@ -723,35 +723,35 @@ class Taller extends CI_Controller
 			$id_usuario = $this->session->id_usuario;
 			$fecha = date('Y-m-d');
 			$id_sucursal = $this->session->id_sucursal;
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$usuario_ap = NULL;
 			if ($row_ap != NULL) {
 				$id_apertura = $row_ap->id_apertura;
-				$usuario_ap =	$this->ventas->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
+				$usuario_ap =	$this->taller->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
 				if ($row_ap->id_usuario == 0) {
 				} else {
-					$detalle_ap =	$this->ventas->get_one_row("detalle_apertura", array('id_apertura' => $id_apertura, 'vigente' => 1, 'id_usuario' => $row_ap->id_usuario,));
+					$detalle_ap =	$this->taller->get_one_row("detalle_apertura", array('id_apertura' => $id_apertura, 'vigente' => 1, 'id_usuario' => $row_ap->id_usuario,));
 				}
 			}
-			$row_clientes = $this->ventas->get_detail_rows("clientes", array('null' => -1,)); //
+			$row_clientes = $this->taller->get_detail_rows("clientes", array('null' => -1,)); //
 			//fin apertura caja
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
-			$rowc = $this->ventas->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
-			$rowpc = $this->ventas->get_porcent_client($rowc->clasifica);
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$rowc = $this->taller->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
+			$rowpc = $this->taller->get_porcent_client($rowc->clasifica);
 			$clasifica = $rowc->clasifica;
-			$detalles = $this->ventas->get_detail_ci($id);
-			$detalleservicios = $this->ventas->get_detail_serv($id);
-			$tipodoc =	$this->ventas->get_tipodoc();
+			$detalles = $this->taller->get_detail_ci($id);
+			$detalleservicios = $this->taller->get_detail_serv($id);
+			$tipodoc =	$this->taller->get_tipodoc();
 			$detalles1 = array();
 			if ($detalles != NULL) {
 				foreach ($detalles as $detalle) {
 					$id_producto = $detalle->id_producto;
 					$precio = $detalle->precio;
 					$qty_sold = $detalle->cantidad;
-					//$precios=$this->ventas->get_detail_rows("producto_precio",array('id_producto' =>$id_producto,'id_listaprecio'=>$clasifica));
+					//$precios=$this->taller->get_detail_rows("producto_precio",array('id_producto' =>$id_producto,'id_listaprecio'=>$clasifica));
 
-					$precios = $this->ventas->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
-					$stock_data = $this->ventas->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
+					$precios = $this->taller->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
+					$stock_data = $this->taller->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
 					$lista = "";
 					$lista .= "<select class='form-control precios sel' style='width:100%;'>";
 					$costo = 0;
@@ -775,7 +775,7 @@ class Taller extends CI_Controller
 					$detalle->id_stock = $stock_data->id_stock;
 					$detalle->id_color = $stock_data->id_color;
 
-					$d = $this->ventas->get_reservado($id_producto, $id, $detalle->id_color);
+					$d = $this->taller->get_reservado($id_producto, $id, $detalle->id_color);
 					$detalle->reservado = $d->reservado;
 
 					$estado = "<select class='est'>";
@@ -802,7 +802,7 @@ class Taller extends CI_Controller
 					"detalleservicios" => $detalleservicios,
 					'tipodoc' => $tipodoc,
 					'rowpc' => $rowpc,
-					"sucursal" => $this->ventas->get_detail_rows("sucursales", array('1' => 1,)),
+					"sucursal" => $this->taller->get_detail_rows("sucursales", array('1' => 1,)),
 					"id_sucursal" => $row->id_sucursal,
 					"rowc" => $rowc,
 					"row_clientes" => $row_clientes,
@@ -812,13 +812,13 @@ class Taller extends CI_Controller
 				);
 				$extras = array(
 					'css' => array(
-						"css/scripts/ventas.css"
+						"css/scripts/taller.css"
 					),
 					'js' => array(
-						"js/scripts/ventas.js"
+						"js/scripts/taller.js"
 					),
 				);
-				layout("ventas/finalizar", $data, $extras);
+				layout("taller/finalizar", $data, $extras);
 			} else {
 				redirect('errorpage');
 			}
@@ -832,39 +832,39 @@ class Taller extends CI_Controller
 			$data_ingreso = json_decode($this->input->post("data_ingreso"), true);
 			$tipodoc = $this->input->post("tipodoc");
 			$id_sucursal = $this->session->id_sucursal;
-			$envio = $this->input->post("envio");
+			$envio = $this->input->post("envio") ?? "";
 			$id_usuario = $this->session->id_usuario;
 			$hora = date("H:i:s");
 			$fechahoy = date('Y-m-d');
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 			$id_sucursalO = $row->id_sucursal;
-			$fecha_corr = $this->ventas->get_date_correlative($id_sucursal);
+			$fecha_corr = $this->taller->get_date_correlative($id_sucursal);
 			$referencia =  $row->referencia;
 
 
 			switch ($tipodoc) {
 				case 1:
-					$correlativo = $this->ventas->get_correlative('tik', $id_sucursal);
-					$correlativo1 = $this->ventas->update_correlative('tik', $correlativo, $id_sucursal);
+					$correlativo = $this->taller->get_correlative('tik', $id_sucursal);
+					$correlativo1 = $this->taller->update_correlative('tik', $correlativo, $id_sucursal);
 					break;
 				case 2:
-					$correlativo = $this->ventas->get_correlative('cof', $id_sucursal);
-					$correlativo1 = $this->ventas->update_correlative('cof', $correlativo, $id_sucursal);
+					$correlativo = $this->taller->get_correlative('cof', $id_sucursal);
+					$correlativo1 = $this->taller->update_correlative('cof', $correlativo, $id_sucursal);
 					break;
 				case 3:
-					$correlativo = $this->ventas->get_correlative('ccf', $id_sucursal);
-					$correlativo1 = $this->ventas->update_correlative('ccf', $correlativo, $id_sucursal);
+					$correlativo = $this->taller->get_correlative('ccf', $id_sucursal);
+					$correlativo1 = $this->taller->update_correlative('ccf', $correlativo, $id_sucursal);
 					break;
 			}
 
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fechahoy);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fechahoy);
 			$id_apertura = $row_ap->id_apertura;
 			$caja = $row_ap->caja;
 			$data = array(
 				'fecha' => $fecha,
 				'hora' => $hora,
-				'concepto' => "VENTA FIN",
-				'indicaciones' => "VENTA FIN",
+				'concepto' => $concepto,
+				'indicaciones' => "TRABAJO DE TALLER",
 				'id_cliente' => $id_cliente,
 				'envio' => $envio,
 				'id_estado' => 2,
@@ -886,14 +886,15 @@ class Taller extends CI_Controller
 
 			/*editar encabezado*/
 			$this->utils->update('trabajos_taller', $data, "id_trabajo_taller=$id_trabajo_taller");
+			$id_venta = $this->ventas->inAndCon('ventas',$data);
 
 			/*Cargo los detalles previos*/
-			$detalles_previos = $this->ventas->get_detail_ci($id_trabajo_taller);
+			$detalles_previos = $this->taller->get_detail_ci($id_trabajo_taller);
 			if ($detalles_previos != NULL) {
 				foreach ($detalles_previos as $key) {
 
 					if ($key->tipo_prod == 0) {
-						$stock_data = $this->ventas->get_stock($key->id_producto, $key->id_color, $id_sucursalO);
+						$stock_data = $this->taller->get_stock($key->id_producto, $key->id_color, $id_sucursalO);
 						$newstock = ($stock_data->cantidad) + ($key->cantidad);
 						$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 					}
@@ -929,10 +930,14 @@ class Taller extends CI_Controller
 						'subtotal' => $subtotal,
 						'condicion' => $estado,
 						'tipo_prod' => $tipo,
-						'garantia' =>  $this->ventas->getGarantia($id_producto, $estado),
+						'garantia' =>  $this->taller->getGarantia($id_producto, $estado),
 						'id_precio_producto' => $id_precio,
 					);
-					$id_detalle = $this->ventas->inAndCon('trabajos_taller_detalle', $form_data);
+					$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
+					
+					unset($form_data['id_trabajo_taller']);
+					$form_data['id_venta'] = $id_venta;
+					$id_detalle_v = $this->ventas->inAndCon('ventas_detalle',$form_data);
 					$this->utils->update(
 						"producto",
 						array(
@@ -944,7 +949,7 @@ class Taller extends CI_Controller
 					);
 
 					if ($tipo == 0 && $estado != "SERVICIO") {
-						$stock_data = $this->ventas->get_stock($id_producto, $color, $id_sucursal);
+						$stock_data = $this->taller->get_stock($id_producto, $color, $id_sucursal);
 						$newstock = ($stock_data->cantidad) - $cantidad;
 						$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 					}
@@ -954,7 +959,7 @@ class Taller extends CI_Controller
 			$this->utils->commit();
 			$xdatos["type"] = "success";
 			$xdatos['title'] = 'Información';
-			$xdatos["msg"] = "Venta guardada correctamente!";
+			$xdatos["msg"] = "Facturacion guardada correctamente!";
 			$xdatos["id_factura"] = $id_trabajo_taller;
 			$xdatos["proceso"] = "finalizar";
 
@@ -982,25 +987,25 @@ class Taller extends CI_Controller
 				$id_usuario = $this->session->id_usuario;
 				$hora = date("H:i:s");
 				$fechahoy = date('Y-m-d');
-				$fecha_corr = $this->ventas->get_date_correlative($id_sucursal);
+				$fecha_corr = $this->taller->get_date_correlative($id_sucursal);
 
-				$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fechahoy);
+				$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fechahoy);
 				$id_apertura = $row_ap->id_apertura;
 				$caja = $row_ap->caja;
 
 				$referencia = 0;
 				switch ($tipodoc) {
 					case 1:
-						$correlativo = $this->ventas->get_correlative('tik', $id_sucursal);
-						$correlativo1 = $this->ventas->update_correlative('tik', $correlativo, $id_sucursal);
+						$correlativo = $this->taller->get_correlative('tik', $id_sucursal);
+						$correlativo1 = $this->taller->update_correlative('tik', $correlativo, $id_sucursal);
 						break;
 					case 2:
-						$correlativo = $this->ventas->get_correlative('cof', $id_sucursal);
-						$correlativo1 = $this->ventas->update_correlative('cof', $correlativo, $id_sucursal);
+						$correlativo = $this->taller->get_correlative('cof', $id_sucursal);
+						$correlativo1 = $this->taller->update_correlative('cof', $correlativo, $id_sucursal);
 						break;
 					case 3:
-						$correlativo = $this->ventas->get_correlative('ccf', $id_sucursal);
-						$correlativo1 = $this->ventas->update_correlative('ccf', $correlativo, $id_sucursal);
+						$correlativo = $this->taller->get_correlative('ccf', $id_sucursal);
+						$correlativo1 = $this->taller->update_correlative('ccf', $correlativo, $id_sucursal);
 						break;
 				}
 
@@ -1025,7 +1030,7 @@ class Taller extends CI_Controller
 
 				$imei_required = false;
 
-				$id_factura = $this->ventas->inAndCon('trabajos_taller', $data);
+				$id_factura = $this->taller->inAndCon('trabajos_taller', $data);
 				if ($id_factura != NULL) {
 					if ($data_ingreso != NULL) {
 						foreach ($data_ingreso as $fila) {
@@ -1054,17 +1059,17 @@ class Taller extends CI_Controller
 								'subtotal' => $subtotal,
 								'condicion' => $estado,
 								'tipo_prod' => $tipo,
-								'garantia' =>  $this->ventas->getGarantia($id_producto, $estado),
+								'garantia' =>  $this->taller->getGarantia($id_producto, $estado),
 								'id_precio_producto' => $id_precio,
 							);
-							$id_detalle = $this->ventas->inAndCon('trabajos_taller_detalle', $form_data);
+							$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
 
 							if ($tipo == 0) {
-								$stock_data = $this->ventas->get_stock($id_producto, $color, $id_sucursal);
+								$stock_data = $this->taller->get_stock($id_producto, $color, $id_sucursal);
 								$newstock = ($stock_data->cantidad) - $cantidad;
 								$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 							}
-							if ($this->ventas->has_imei_required($id_producto)) {
+							if ($this->taller->has_imei_required($id_producto)) {
 								$imei_required = true;
 							}
 						}
@@ -1097,26 +1102,26 @@ class Taller extends CI_Controller
 				$id_usuario = $this->session->id_usuario;
 				$hora = date("H:i:s");
 
-				$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+				$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 				$id_sucursalO = $row->id_sucursal;
-				$fecha_corr = $this->ventas->get_date_correlative($id_sucursal);
+				$fecha_corr = $this->taller->get_date_correlative($id_sucursal);
 				$referencia =  $row->referencia;
 
 				switch ($tipodoc) {
 					case 1:
-						$correlativo = $this->ventas->get_correlative('tik', $id_sucursal);
-						$correlativo1 = $this->ventas->update_correlative('tik', $correlativo, $id_sucursal);
+						$correlativo = $this->taller->get_correlative('tik', $id_sucursal);
+						$correlativo1 = $this->taller->update_correlative('tik', $correlativo, $id_sucursal);
 						break;
 					case 2:
-						$correlativo = $this->ventas->get_correlative('cof', $id_sucursal);
-						$correlativo1 = $this->ventas->update_correlative('cof', $correlativo, $id_sucursal);
+						$correlativo = $this->taller->get_correlative('cof', $id_sucursal);
+						$correlativo1 = $this->taller->update_correlative('cof', $correlativo, $id_sucursal);
 						break;
 					case 3:
-						$correlativo = $this->ventas->get_correlative('ccf', $id_sucursal);
-						$correlativo1 = $this->ventas->update_correlative('ccf', $correlativo, $id_sucursal);
+						$correlativo = $this->taller->get_correlative('ccf', $id_sucursal);
+						$correlativo1 = $this->taller->update_correlative('ccf', $correlativo, $id_sucursal);
 						break;
 				}
-				$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+				$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 				$id_apertura = $row_ap->id_apertura;
 				$caja = $row_ap->caja;
 
@@ -1148,12 +1153,12 @@ class Taller extends CI_Controller
 				$this->utils->update('trabajos_taller', $data, "id_trabajo_taller=$id_trabajo_taller");
 
 				/*Cargo los detalles previos*/
-				$detalles_previos = $this->ventas->get_detail_ci($id_trabajo_taller);
+				$detalles_previos = $this->taller->get_detail_ci($id_trabajo_taller);
 				if ($detalles_previos != NULL) {
 					foreach ($detalles_previos as $key) {
 
 						if ($key->tipo_prod == 0) {
-							$stock_data = $this->ventas->get_stock($key->id_producto, $key->id_color, $id_sucursalO);
+							$stock_data = $this->taller->get_stock($key->id_producto, $key->id_color, $id_sucursalO);
 							$newstock = ($stock_data->cantidad) + ($key->cantidad);
 							$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 						}
@@ -1189,10 +1194,10 @@ class Taller extends CI_Controller
 							'subtotal' => $subtotal,
 							'condicion' => $estado,
 							'tipo_prod' => $tipo,
-							'garantia' =>  $this->ventas->getGarantia($id_producto, $estado),
+							'garantia' =>  $this->taller->getGarantia($id_producto, $estado),
 							'id_precio_producto' => $id_precio,
 						);
-						$id_detalle = $this->ventas->inAndCon('trabajos_taller_detalle', $form_data);
+						$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
 						$this->utils->update(
 							"producto",
 							array(
@@ -1204,7 +1209,7 @@ class Taller extends CI_Controller
 						);
 
 						if ($tipo == 0 && $estado != "SERVICIO") {
-							$stock_data = $this->ventas->get_stock($id_producto, $color, $id_sucursal);
+							$stock_data = $this->taller->get_stock($id_producto, $color, $id_sucursal);
 							$newstock = ($stock_data->cantidad) - $cantidad;
 							$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 						}
@@ -1232,7 +1237,8 @@ class Taller extends CI_Controller
 			}
 			$errors = false;
 			$this->utils->begin();
-			$id_trabajo_taller = $this->input->post("id_vta");
+			$id_trabajo_taller = $this->input->post("id_tr_taller");
+			$concepto = $this->input->post("cncpto");
 			$id_cliente = $this->input->post("id_client");
 			//$vendedor = $this->input->post("vendedor");
 			$clasifica = $this->input->post("clasifica");
@@ -1248,13 +1254,13 @@ class Taller extends CI_Controller
 			$fechahoy = date('Y-m-d');
 			$hora = date("H:i:s");
 			//datos de apertura actual
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fechahoy);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fechahoy);
 			$id_apertura = $row_ap->id_apertura;
 			$caja = $row_ap->caja;
 			//fin datos de apertura actual
 
-			$rowvta = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
-			$row_confdir = $this->ventas->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
+			$rowvta = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+			$row_confdir = $this->taller->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
 			$tipodoc =	$rowvta->tipo_doc;
 			$voucher = "";
 			$credito = 0;
@@ -1280,8 +1286,8 @@ class Taller extends CI_Controller
 						'clasifica' => $clasifica,
 						'activo' => 1,
 					);
-					$row_confpos = $this->ventas->get_one_row("config_pos", array('id_sucursal' => $id_sucursal, 'alias_tipodoc' => 'tik',));
-					//$correlativo1 = $this->ventas->update_correlative('tik',$correlativo,$id_sucursal);
+					$row_confpos = $this->taller->get_one_row("config_pos", array('id_sucursal' => $id_sucursal, 'alias_tipodoc' => 'tik',));
+					//$correlativo1 = $this->taller->update_correlative('tik',$correlativo,$id_sucursal);
 					break;
 				case 2:
 
@@ -1294,7 +1300,7 @@ class Taller extends CI_Controller
 						'clasifica' => $clasifica,
 						'activo' => 1,
 					);
-					//$correlativo1 = $this->ventas->update_correlative('cof',$correlativo,$id_sucursal);
+					//$correlativo1 = $this->taller->update_correlative('cof',$correlativo,$id_sucursal);
 					break;
 				case 3:
 					$nit = $this->input->post("nit");
@@ -1308,13 +1314,13 @@ class Taller extends CI_Controller
 						'nrc' => $nrc,
 						'activo' => 1,
 					);
-					//$correlativo1 = $this->ventas->update_correlative('ccf',$correlativo,$id_sucursal);
+					//$correlativo1 = $this->taller->update_correlative('ccf',$correlativo,$id_sucursal);
 					break;
 			}
 			if ($id_cliente < 0) {
 				//$id_client=$id_cliente;
 				if ($tipodoc > 1) {
-					$id_cliente = $this->ventas->inAndCon("clientes", $form_data);
+					$id_cliente = $this->taller->inAndCon("clientes", $form_data);
 				}
 				if ($id_cliente == NULL) {
 					$errors = true;
@@ -1325,7 +1331,7 @@ class Taller extends CI_Controller
 						//'correlativo'	=>$correlativo,
 						'id_estado' => 2,
 						'id_usuario' => $vendedor,
-						"concepto" => "VENTA DE PRODUCTOS Y SERVICIOS",
+						"concepto" => $concepto,
 						'tipo_pago' => $tipo_pago,
 						'voucher_pago' => $voucher,
 						'credito' => $credito,
@@ -1353,7 +1359,7 @@ class Taller extends CI_Controller
 							'saldo' => $saldo,
 							'estado' => $estado_cxc,
 						);
-						$id_cxc = $this->ventas->inAndCon($t1, $arr_cxc);
+						$id_cxc = $this->taller->inAndCon($t1, $arr_cxc);
 						//id_cuentas_por_cobrar, abono, fecha, hora
 						/*
 						$fecha_abono=date("Y-m-d");
@@ -1363,7 +1369,7 @@ class Taller extends CI_Controller
 							'fecha'=>$fecha_abono,
 							'hora' =>$hora,
 						);
-							$id_cxc_ab=$this->ventas->inAndCon($t2,$arr_cxc_ab);
+							$id_cxc_ab=$this->taller->inAndCon($t2,$arr_cxc_ab);
 						*/
 					}
 				}
@@ -1380,7 +1386,7 @@ class Taller extends CI_Controller
 					'id_usuario' => $vendedor,
 					'correlativo'	=> $correlativo,
 					'id_estado'	=> 2, //cambiar estadoa Finalizado id:2, cambiar despues
-					"concepto" => "VENTA DE PRODUCTOS Y SERVICIOS",
+					"concepto" => $concepto,
 					'tipo_pago' => $tipo_pago,
 					'voucher_pago' => $voucher,
 					'credito' => $credito,
@@ -1408,7 +1414,7 @@ class Taller extends CI_Controller
 						'saldo' => $saldo,
 						'estado' => $estado_cxc,
 					);
-					$id_cxc = $this->ventas->inAndCon($t1, $arr_cxc);
+					$id_cxc = $this->taller->inAndCon($t1, $arr_cxc);
 					//id_cuentas_por_cobrar, abono, fecha, hora
 					/*
 						$fecha_abono=date("Y-m-d");
@@ -1418,7 +1424,7 @@ class Taller extends CI_Controller
 							'fecha'=>$fecha_abono,
 							'hora' =>$hora,
 						);
-							$id_cxc_ab=$this->ventas->inAndCon($t2,$arr_cxc_ab);
+							$id_cxc_ab=$this->taller->inAndCon($t2,$arr_cxc_ab);
 						*/
 				}
 
@@ -1452,7 +1458,7 @@ class Taller extends CI_Controller
 
 				$xdatos["type"] = "success";
 				$xdatos['title'] = 'Información';
-				$xdatos["msg"] = "Venta guardada correctamente!";
+				$xdatos["msg"] = "Facturacion guardada correctamente!";
 				$xdatos["tipodoc"] = $tipodoc;
 				$xdatos["id_client"] = $id_cliente;
 				$xdatos["total_letras"] = $total_letras;
@@ -1471,23 +1477,23 @@ class Taller extends CI_Controller
 			$id_usuario = $this->session->id_usuario;
 			$fecha = date('Y-m-d');
 			$id_sucursal = $this->session->id_sucursal;
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$usuario_ap = NULL;
 			if ($row_ap != NULL) {
 				$id_apertura = $row_ap->id_apertura;
-				$usuario_ap =	$this->ventas->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
+				$usuario_ap =	$this->taller->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
 			}
-			$row_clientes = $this->ventas->get_detail_rows("clientes", array('null' => -1,)); //
+			$row_clientes = $this->taller->get_detail_rows("clientes", array('null' => -1,)); //
 			//fin apertura caja
 
 			$id = $this->uri->segment(3);
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
-			$rowc = $this->ventas->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
-			$rowpc = $this->ventas->get_porcent_client($rowc->clasifica);
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$rowc = $this->taller->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
+			$rowpc = $this->taller->get_porcent_client($rowc->clasifica);
 
-			$detalles = $this->ventas->get_detail_ci($id);
-			$detalleservicios = $this->ventas->get_detail_serv($id);
-			$tipodoc =	$this->ventas->get_tipodoc();
+			$detalles = $this->taller->get_detail_ci($id);
+			$detalleservicios = $this->taller->get_detail_serv($id);
+			$tipodoc =	$this->taller->get_tipodoc();
 			$detalles1 = array();
 			if ($detalles != NULL) {
 				foreach ($detalles as $detalle) {
@@ -1495,16 +1501,16 @@ class Taller extends CI_Controller
 					$precio = $detalle->precio;
 					$detallesp = $this->precios_producto($id_producto, $precio);
 					if ($detallesp != 0) {
-						$stock_data = $this->ventas->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
+						$stock_data = $this->taller->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
 						$detalle->precios = $detallesp["precios"];
 						$detalle->stock = $stock_data->cantidad;
 						$detalle->id_stock = $stock_data->id_stock;
 						$detalle->id_color = $stock_data->id_color;
 
-						$d = $this->ventas->get_reservado($id_producto, $id, $detalle->id_color);
+						$d = $this->taller->get_reservado($id_producto, $id, $detalle->id_color);
 						$detalle->reservado = $d->reservado;
 
-						$row_dev = $this->ventas->get_dev_ante($id_producto, $id);
+						$row_dev = $this->taller->get_dev_ante($id_producto, $id);
 						$detalle->dev_ante = $row_dev->dev_ante;
 
 
@@ -1528,7 +1534,7 @@ class Taller extends CI_Controller
 
 				foreach ($detalleservicios as $detalleserv) {
 					$id_producto = $detalleserv->id_producto;
-					$row_dev = $this->ventas->get_dev_ante($id_producto, $id);
+					$row_dev = $this->taller->get_dev_ante($id_producto, $id);
 					$detalleserv->dev_ante = $row_dev->dev_ante;
 					if ($row_dev != NULL)
 						$detalleserv->dev_ante = $row_dev->dev_ante;
@@ -1550,7 +1556,7 @@ class Taller extends CI_Controller
 					"detalleservicios" => $detalles2,
 					'tipodoc' => $tipodoc,
 					'rowpc' => $rowpc,
-					"sucursal" => $this->ventas->get_detail_rows("sucursales", array('1' => 1,)),
+					"sucursal" => $this->taller->get_detail_rows("sucursales", array('1' => 1,)),
 					"id_sucursal" => $row->id_sucursal,
 					"rowc" => $rowc,
 					"id_usuario" => $id_usuario,
@@ -1577,9 +1583,9 @@ class Taller extends CI_Controller
 			$id_cliente = $this->input->post("id_cliente");
 			$data_ingreso = json_decode($this->input->post("data_ingreso"), true);
 
-			$rowdoc = $this->ventas->get_tipodoc_alias("DEV");
+			$rowdoc = $this->taller->get_tipodoc_alias("DEV");
 			$id_sucursal = $this->session->id_sucursal;
-			$correlativo = $this->ventas->get_correlative('dev', $id_sucursal);
+			$correlativo = $this->taller->get_correlative('dev', $id_sucursal);
 
 			$totcant = count($data_ingreso);
 			$id_usuario = $this->session->id_usuario;
@@ -1596,13 +1602,13 @@ class Taller extends CI_Controller
 
 			);
 
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha_dev);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha_dev);
 			$id_apertura = $row_ap->id_apertura;
 			$caja = $row_ap->caja;
-			$correlativo1 = $this->ventas->update_correlative('dev', $correlativo, $id_sucursal);
-			$id_dev = $this->ventas->inAndCon($tabla, $form_data);
+			$correlativo1 = $this->taller->update_correlative('dev', $correlativo, $id_sucursal);
+			$id_dev = $this->taller->inAndCon($tabla, $form_data);
 			//se inserta tambien en la tabla ventas como tipo devolucion ID 4 DEV
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 			$id_sucursal = $row->id_sucursal;
 			if ($rowdoc != NULL)
 				$tipodoc = $rowdoc->idtipodoc;
@@ -1626,7 +1632,7 @@ class Taller extends CI_Controller
 				'id_devolucion' => $id_dev,
 			);
 			$tabla1 = "trabajos_taller";
-			$id_dev_vta = $this->ventas->inAndCon($tabla1, $data);
+			$id_dev_vta = $this->taller->inAndCon($tabla1, $data);
 
 			/*nuevos detalles*/
 			if ($data_ingreso != NULL) {
@@ -1656,11 +1662,11 @@ class Taller extends CI_Controller
 						'tipo_prod' => $tipo,
 					);
 					//se inserta en la tabla venta_detalle c/u de los items
-					$id_detalle = $this->ventas->inAndCon('trabajos_taller_detalle', $form_data);
+					$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
 
 
 					if ($tipo == 0) {
-						$stock_data = $this->ventas->get_stock($id_producto, $color, $id_sucursal);
+						$stock_data = $this->taller->get_stock($id_producto, $color, $id_sucursal);
 						$newstock = ($stock_data->cantidad) + $cant_dev;
 						$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 					}
@@ -1674,14 +1680,14 @@ class Taller extends CI_Controller
 						'monto' => $costo,
 						'id_trabajo_taller_detalle' => $id_detalle,
 					);
-					$insertar = $this->ventas->inAndCon($tabla2, $form_data2);
+					$insertar = $this->taller->inAndCon($tabla2, $form_data2);
 				}
 			}
 
 			$this->utils->commit();
 			$xdatos["type"] = "success";
 			$xdatos['title'] = 'Información';
-			$xdatos["msg"] = "Venta guardada correctamente!";
+			$xdatos["msg"] = "Facturacion guardada correctamente!";
 			$xdatos["proceso"] = "finalizar";
 
 			echo json_encode($xdatos);
@@ -1691,11 +1697,11 @@ class Taller extends CI_Controller
 	{
 		if ($this->input->method(TRUE) == "GET") {
 			$id = $this->uri->segment(3);
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
 			if ($row && $id != "") {
 				$data = array(
 					"row" => $row,
-					"detalles" => $this->ventas->get_detail_ci($id),
+					"detalles" => $this->taller->get_detail_ci($id),
 				);
 				$extras = array(
 					'css' => array(),
@@ -1725,7 +1731,7 @@ class Taller extends CI_Controller
 					'vendido' => 1,
 				);
 
-				$id_detalle = $this->ventas->inAndCon('ventas_imei', $form_data);
+				$id_detalle = $this->taller->inAndCon('ventas_imei', $form_data);
 
 				if ($id_detalle == NULL) {
 					// code...
@@ -1755,9 +1761,9 @@ class Taller extends CI_Controller
 	{
 		if ($this->input->method(TRUE) == "GET") {
 			$id = $this->uri->segment(3);
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id,));
 
-			$info = $this->ventas->get_imei_ci($id);
+			$info = $this->taller->get_imei_ci($id);
 			$detalles = array();
 			$c = 0;
 			foreach ($info as $key) {
@@ -1768,7 +1774,7 @@ class Taller extends CI_Controller
 					'id_detalle' => $key->id_detalle,
 					'nombre' => $key->nombre,
 					'chain' => $key->chain,
-					'data' => $this->ventas->get_imei_ci_det($key->chain),
+					'data' => $this->taller->get_imei_ci_det($key->chain),
 				);
 				$c++;
 			}
@@ -1818,15 +1824,15 @@ class Taller extends CI_Controller
 		if ($this->input->method(TRUE) == "POST") {
 			$id_trabajo_taller = $this->input->post("id");
 			$this->utils->begin();
-			$row = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+			$row = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 			$id_sucursal = $row->id_sucursal;
 			/*descargar los detalles previos*/
-			$detalles_previos = $this->ventas->get_detail_rows("trabajos_taller_detalle", array('id_trabajo_taller' => $id_trabajo_taller,));
+			$detalles_previos = $this->taller->get_detail_rows("trabajos_taller_detalle", array('id_trabajo_taller' => $id_trabajo_taller,));
 			foreach ($detalles_previos as $key) {
 				// code...
 
 				if ($key->tipo_prod == 0) {
-					$stock_data = $this->ventas->get_stock($key->id_producto, $key->id_color, $id_sucursal);
+					$stock_data = $this->taller->get_stock($key->id_producto, $key->id_color, $id_sucursal);
 					$newstock = ($stock_data->cantidad) + ($key->cantidad);
 					$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 				}
@@ -1872,7 +1878,7 @@ class Taller extends CI_Controller
 			$pdf->SetAutoPageBreak(true, 15);
 			$pdf->AliasNbPages();
 
-			$vg = $this->ventas->get_venta($id);
+			$vg = $this->taller->get_venta($id);
 			$id_sucursal = $vg->id_sucursal_despacho;
 			$this->db->where("id_sucursal", $id_sucursal);
 			$q = $this->db->get("sucursales");
@@ -1932,10 +1938,10 @@ class Taller extends CI_Controller
 
 			$pdf->SetFont('Arial', '', 9);
 
-			$dat = $this->ventas->get_detail_ci($id);
+			$dat = $this->taller->get_detail_ci($id);
 			foreach ($dat as $key) {
 
-				$im =  $this->ventas->get_imei_productos($key->id_detalle);
+				$im =  $this->taller->get_imei_productos($key->id_detalle);
 				$imei = "";
 
 				if ($im) {
@@ -1965,7 +1971,7 @@ class Taller extends CI_Controller
 			$pdf->SetStyle("p", "arial", "N", 9, "0,0,0", 0);
 			$pdf->SetStyle("b", "arial", "BN", 9, "0,0,0");
 
-			$dat = $this->ventas->get_one_row("report_parrafo", array('tipo' => "GarantiaE",));
+			$dat = $this->taller->get_one_row("report_parrafo", array('tipo' => "GarantiaE",));
 			$pdf->WriteTag(0, 4, $dat->texto, 0, "J", 0, 0);
 			$pdf->Ln(5);
 
@@ -2026,7 +2032,7 @@ class Taller extends CI_Controller
 		}
 		//SELECT `id_servicio`, `id_categoria`, `nombre`, `costo_s_iva`, `costo_c_iva`, `cesc`,
 		//`precio_sugerido`, `precio_minimo`, `dias_garantia`, `activo`, `deleted` FROM `servicio` WHERE 1
-		$prods = $this->ventas->get_row_servicios($id_producto);
+		$prods = $this->taller->get_row_servicios($id_producto);
 		$xdatos["precio_sugerido"] = $prods->precio_sugerido;
 		$xdatos["precio_minimo"] = $prods->precio_minimo;
 		$xdatos["costo"] = number_format($prods->costo_s_iva, 2, ".", "");
@@ -2044,14 +2050,14 @@ class Taller extends CI_Controller
 		}
 		$lista = "";
 		if ($id_color != -1)
-			$stock_data = $this->ventas->get_stock($id_producto, $id_color, $id_sucursal);
-		$prods = $this->ventas->get_producto($id_producto);
-		$preciosS = $this->ventas->get_detail_rows("producto_precio", array('id_producto' => $id_producto, 'id_listaprecio' => $clasifica));
+			$stock_data = $this->taller->get_stock($id_producto, $id_color, $id_sucursal);
+		$prods = $this->taller->get_producto($id_producto);
+		$preciosS = $this->taller->get_detail_rows("producto_precio", array('id_producto' => $id_producto, 'id_listaprecio' => $clasifica));
 
-		$precios = $this->ventas->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
-		$colores = $this->ventas->get_detail_rows("producto_color", array('id_producto' => $id_producto,));
+		$precios = $this->taller->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
+		$colores = $this->taller->get_detail_rows("producto_color", array('id_producto' => $id_producto,));
 
-		$d = $this->ventas->get_reservado($id_producto, $id_trabajo_taller, $id_color);
+		$d = $this->taller->get_reservado($id_producto, $id_trabajo_taller, $id_color);
 
 		$color_select = "";
 		if ($colores) {
@@ -2099,9 +2105,9 @@ class Taller extends CI_Controller
 	{
 		$id_sucursal = $this->session->id_sucursal;
 
-		$precios = $this->ventas->get_precios_exis($id);
+		$precios = $this->taller->get_precios_exis($id);
 
-		// $precios=$this->ventas->get_detail_rows("producto_precio",array('id_producto' =>$id_producto,'id_listaprecio'=>$clasifica));
+		// $precios=$this->taller->get_detail_rows("producto_precio",array('id_producto' =>$id_producto,'id_listaprecio'=>$clasifica));
 		$lista = "";
 		$lista .= "<select class='form-control precios sel' style='width:100%;'>";
 		$costo = 0;
@@ -2126,8 +2132,8 @@ class Taller extends CI_Controller
 	{
 		$query = $this->input->post("query");
 		$id_sucursal = $this->input->post("id_sucursal");
-		$rows = $this->ventas->get_productos($query, $id_sucursal);
-		$rows2 = $this->ventas->get_servicios($query, $id_sucursal);
+		$rows = $this->taller->get_productos($query, $id_sucursal);
+		$rows2 = $this->taller->get_servicios($query, $id_sucursal);
 		$output = array();
 		if ($rows != NULL) {
 			foreach ($rows as $row) {
@@ -2150,7 +2156,7 @@ class Taller extends CI_Controller
 	function get_clientes()
 	{
 		$query = $this->input->post("query");
-		$rows = $this->ventas->get_clientes($query);
+		$rows = $this->taller->get_clientes($query);
 		$output = array();
 		if ($rows != NULL) {
 			foreach ($rows as $row) {
@@ -2165,9 +2171,9 @@ class Taller extends CI_Controller
 	function get_porcent_cliente()
 	{
 		$clasifica = $this->input->post("clasifica");
-		$row = $this->ventas->get_one_row("clientes", array('activo' => 1, 'deleted' => 0, 'id_cliente' => $clasifica));
+		$row = $this->taller->get_one_row("clientes", array('activo' => 1, 'deleted' => 0, 'id_cliente' => $clasifica));
 		//fin apertura caja
-		//$row = $this->ventas->get_porcent_client($clasifica);
+		//$row = $this->taller->get_porcent_client($clasifica);
 		if ($row != NULL) {
 			$porcent_clasifica = $row->clasifica;
 		} else {
@@ -2182,19 +2188,19 @@ class Taller extends CI_Controller
 	function facturar()
 	{
 		if ($this->input->method(TRUE) == "GET") {
-			$tipodoc =	$this->ventas->get_tipodoc();
+			$tipodoc =	$this->taller->get_tipodoc();
 			$id_usuario = $this->session->id_usuario;
 			$id_sucursal = $this->session->id_sucursal;
 			$fecha = date('Y-m-d');
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$usuario_ap = NULL;
 			if ($row_ap != NULL) {
 				$id_apertura = $row_ap->id_apertura;
-				$usuario_ap =	$this->ventas->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
+				$usuario_ap =	$this->taller->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
 			}
-			$row_clientes = $this->ventas->get_detail_rows("clientes", array('null' => -1,)); //
+			$row_clientes = $this->taller->get_detail_rows("clientes", array('null' => -1,)); //
 			$data = array(
-				"sucursal" => $this->ventas->get_detail_rows("sucursales", array('1' => 1,)),
+				"sucursal" => $this->taller->get_detail_rows("sucursales", array('1' => 1,)),
 				"id_sucursal" => $this->session->id_sucursal,
 				"tipodoc" => $tipodoc,
 				"row_ap" => $row_ap,
@@ -2205,18 +2211,18 @@ class Taller extends CI_Controller
 
 			$extras = array(
 				'css' => array(
-					"css/scripts/ventas.css"
+					"css/scripts/taller.css"
 				),
 				'js' => array(
-					"js/scripts/ventas.js"
+					"js/scripts/taller.js"
 				),
 			);
 
-			layout("ventas/facturar", $data, $extras);
+			layout("taller/facturar", $data, $extras);
 		} else if ($this->input->method(TRUE) == "POST") {
 			$this->load->model("ProductosModel", "productos");
 			$this->utils->begin();
-			$concepto = "VENTA";
+			$concepto = $this->input->post("concepto");
 			$fecha = Y_m_d($this->input->post("fecha"));
 			$total = $this->input->post("total");
 
@@ -2226,14 +2232,14 @@ class Taller extends CI_Controller
 			$tipodoc = $this->input->post("tipodoc");
 			$id_usuario = $this->session->id_usuario;
 			$hora = date("H:i:s");
-			$fecha_corr = $this->ventas->get_date_correlative($id_sucursal);
+			$fecha_corr = $this->taller->get_date_correlative($id_sucursal);
 
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$id_apertura = $row_ap->id_apertura;
 			$caja = $row_ap->caja;
 			/*
 			if($fecha==$fecha_corr){
-				$referencia = $this->ventas->get_correlative('refdia',$id_sucursal);
+				$referencia = $this->taller->get_correlative('refdia',$id_sucursal);
 	       $this->utils->update("correlativo",array("refdia" =>$referencia, ),"id_sucursal=".$id_sucursal);
 			}else{
 					$referencia =1;
@@ -2243,13 +2249,13 @@ class Taller extends CI_Controller
 			$referencia = 0;
 			switch ($tipodoc) {
 				case 1:
-					$correlativo = $this->ventas->get_correlative('tik', $id_sucursal);
+					$correlativo = $this->taller->get_correlative('tik', $id_sucursal);
 					break;
 				case 2:
-					$correlativo = $this->ventas->get_correlative('cof', $id_sucursal);
+					$correlativo = $this->taller->get_correlative('cof', $id_sucursal);
 					break;
 				case 3:
-					$correlativo = $this->ventas->get_correlative('ccf', $id_sucursal);
+					$correlativo = $this->taller->get_correlative('ccf', $id_sucursal);
 					break;
 			}
 
@@ -2257,7 +2263,7 @@ class Taller extends CI_Controller
 				'fecha' => $fecha,
 				'hora' => $hora,
 				'concepto' => $concepto,
-				'indicaciones' => "VENTA DE PRODUCTOS Y SERVICIOS",
+				'indicaciones' => "TRABAJO DE TALLER",
 				'id_cliente' => $id_cliente,
 				'id_estado' => 1, //probar cambiar a estado 1 pendiente para ver lo de actualizarlo a la hora de activar form data_client finalizar!!!!!!!
 				'id_sucursal_despacho' => $id_sucursal,
@@ -2276,7 +2282,7 @@ class Taller extends CI_Controller
 
 			$imei_required = false;
 
-			$id_factura = $this->ventas->inAndCon('trabajos_taller', $data);
+			$id_factura = $this->taller->inAndCon('trabajos_taller', $data);
 			if ($id_factura != NULL) {
 				if ($data_ingreso != NULL) {
 					foreach ($data_ingreso as $fila) {
@@ -2304,15 +2310,15 @@ class Taller extends CI_Controller
 							'subtotal' => $subtotal,
 							'condicion' => $estado,
 							'tipo_prod' => $tipo,
-							'garantia' =>  $this->ventas->getGarantia($id_producto, $estado),
+							'garantia' =>  $this->taller->getGarantia($id_producto, $estado),
 						);
-						$id_detalle = $this->ventas->inAndCon('trabajos_taller_detalle', $form_data);
+						$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
 						if ($tipo == 0) {
-							$stock_data = $this->ventas->get_stock($id_producto, $color, $id_sucursal);
+							$stock_data = $this->taller->get_stock($id_producto, $color, $id_sucursal);
 							$newstock = ($stock_data->cantidad) - $cantidad;
 							$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
 						}
-						if ($this->ventas->has_imei_required($id_producto)) {
+						if ($this->taller->has_imei_required($id_producto)) {
 							$imei_required = true;
 						}
 					}
@@ -2342,19 +2348,19 @@ class Taller extends CI_Controller
 	function finalizaref()
 	{
 		if ($this->input->method(TRUE) == "GET") {
-			$tipodoc =	$this->ventas->get_tipodoc();
+			$tipodoc =	$this->taller->get_tipodoc();
 			$id_usuario = $this->session->id_usuario;
 			$id_sucursal = $this->session->id_sucursal;
 			$fecha = date('Y-m-d');
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$usuario_ap = NULL;
 			if ($row_ap != NULL) {
 				$id_apertura = $row_ap->id_apertura;
-				$usuario_ap =	$this->ventas->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
+				$usuario_ap =	$this->taller->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
 			}
-			$row_clientes = $this->ventas->get_detail_rows("clientes", array('null' => -1,)); //
+			$row_clientes = $this->taller->get_detail_rows("clientes", array('null' => -1,)); //
 			$data = array(
-				"sucursal" => $this->ventas->get_detail_rows("sucursales", array('1' => 1,)),
+				"sucursal" => $this->taller->get_detail_rows("sucursales", array('1' => 1,)),
 				"id_sucursal" => $this->session->id_sucursal,
 				"tipodoc" => $tipodoc,
 				"row_ap" => $row_ap,
@@ -2381,13 +2387,13 @@ class Taller extends CI_Controller
 		if ($this->input->method(TRUE) == "POST") {
 			$fecha = date('Y-m-d');
 			$referencia = $this->input->post("referencia");
-			$venta =	$this->ventas->get_one_row("trabajos_taller", array('referencia' => $referencia, 'fecha' => $fecha, "id_estado" => 1,));
+			$venta =	$this->taller->get_one_row("trabajos_taller", array('referencia' => $referencia, 'fecha' => $fecha, "id_estado" => 1,));
 
 			if ($venta != NULL) {
 				$id = $venta->id_trabajo_taller;
-				$detalles = $this->ventas->get_detail_ci($id);
-				$rowc = $this->ventas->get_one_row("clientes", array('id_cliente' => $venta->id_cliente,));
-				$rowpc = $this->ventas->get_porcent_client($rowc->clasifica);
+				$detalles = $this->taller->get_detail_ci($id);
+				$rowc = $this->taller->get_one_row("clientes", array('id_cliente' => $venta->id_cliente,));
+				$rowpc = $this->taller->get_porcent_client($rowc->clasifica);
 				$clasifica = $rowc->clasifica;
 				$detalles1 = array();
 				if ($detalles != NULL) {
@@ -2396,10 +2402,10 @@ class Taller extends CI_Controller
 						$id_producto = $detalle->id_producto;
 						$precio = $detalle->precio;
 						$qty_sold = $detalle->cantidad;
-						$preciosS = $this->ventas->get_detail_rows("producto_precio", array('id_producto' => $id_producto, 'id_listaprecio' => $clasifica));
+						$preciosS = $this->taller->get_detail_rows("producto_precio", array('id_producto' => $id_producto, 'id_listaprecio' => $clasifica));
 
-						$precios = $this->ventas->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
-						$stock_data = $this->ventas->get_stock($id_producto, $detalle->id_color, $venta->id_sucursal);
+						$precios = $this->taller->get_detail_rows("producto_precio", array('id_producto' => $id_producto));
+						$stock_data = $this->taller->get_stock($id_producto, $detalle->id_color, $venta->id_sucursal);
 						$lista = "";
 						$lista .= "<select class='form-control precios sel' style='width:100%;'>";
 						$costo = 0;
@@ -2423,7 +2429,7 @@ class Taller extends CI_Controller
 						$detalle->stock = $stock_data->cantidad + $qty_sold;
 						$detalle->id_stock = $stock_data->id_stock;
 						$detalle->id_color = $stock_data->id_color;
-						$d = $this->ventas->get_reservado($id_producto, $id, $detalle->id_color);
+						$d = $this->taller->get_reservado($id_producto, $id, $detalle->id_color);
 						$detalle->reservado = $d->reservado;
 
 						$estado = "<select class='est'>";
@@ -2441,7 +2447,7 @@ class Taller extends CI_Controller
 						array_push($detalles1, $detalle);
 					}
 				}
-				$detalleservicios = $this->ventas->get_detail_serv($id);
+				$detalleservicios = $this->taller->get_detail_serv($id);
 				$xdatos['id_cliente'] = $venta->id_cliente;
 				$fecha_dmy = d_m_Y($venta->fecha);
 
@@ -2475,29 +2481,29 @@ class Taller extends CI_Controller
 			$referencia = $this->input->get("referencia");
 			$fecha = date('Y-m-d');
 
-			$venta =	$this->ventas->get_one_row("trabajos_taller", array('referencia' => $referencia, 'fecha' => $fecha,));
-			$row =	$this->ventas->get_one_row("trabajos_taller", array('referencia' => $referencia, 'fecha' => $fecha,));
+			$venta =	$this->taller->get_one_row("trabajos_taller", array('referencia' => $referencia, 'fecha' => $fecha,));
+			$row =	$this->taller->get_one_row("trabajos_taller", array('referencia' => $referencia, 'fecha' => $fecha,));
 			$id = $venta->id_trabajo_taller;
 
 			$id_usuario = $this->session->id_usuario;
 			$fecha = date('Y-m-d');
 			$id_sucursal = $this->session->id_sucursal;
-			$row_ap = $this->ventas->get_caja_activa($id_sucursal, $id_usuario, $fecha);
+			$row_ap = $this->taller->get_caja_activa($id_sucursal, $id_usuario, $fecha);
 			$usuario_ap = NULL;
 			if ($row_ap != NULL) {
 				$id_apertura = $row_ap->id_apertura;
-				$usuario_ap =	$this->ventas->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
+				$usuario_ap =	$this->taller->get_one_row("usuario", array('id_usuario' => $row_ap->id_usuario,));
 			}
-			$row_clientes = $this->ventas->get_detail_rows("clientes", array('null' => -1,)); //
+			$row_clientes = $this->taller->get_detail_rows("clientes", array('null' => -1,)); //
 			//fin apertura caja
 
 
-			$rowc = $this->ventas->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
-			$rowpc = $this->ventas->get_porcent_client($rowc->clasifica);
+			$rowc = $this->taller->get_one_row("clientes", array('id_cliente' => $row->id_cliente,));
+			$rowpc = $this->taller->get_porcent_client($rowc->clasifica);
 
-			$detalles = $this->ventas->get_detail_ci($id);
-			$detalleservicios = $this->ventas->get_detail_serv($id);
-			$tipodoc =	$this->ventas->get_tipodoc();
+			$detalles = $this->taller->get_detail_ci($id);
+			$detalleservicios = $this->taller->get_detail_serv($id);
+			$tipodoc =	$this->taller->get_tipodoc();
 			$detalles1 = array();
 			if ($detalles != NULL) {
 				foreach ($detalles as $detalle) {
@@ -2505,13 +2511,13 @@ class Taller extends CI_Controller
 					$precio = $detalle->precio;
 					$detallesp = $this->precios_producto($id_producto, $precio);
 					if ($detallesp != 0) {
-						$stock_data = $this->ventas->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
+						$stock_data = $this->taller->get_stock($id_producto, $detalle->id_color, $row->id_sucursal);
 						$detalle->precios = $detallesp["precios"];
 						$detalle->stock = $stock_data->cantidad;
 						$detalle->id_stock = $stock_data->id_stock;
 						$detalle->id_color = $stock_data->id_color;
 
-						$d = $this->ventas->get_reservado($id_producto, $id, $detalle->id_color);
+						$d = $this->taller->get_reservado($id_producto, $id, $detalle->id_color);
 						$detalle->reservado = $d->reservado;
 
 						$estado = "<select class='est'>";
@@ -2539,7 +2545,7 @@ class Taller extends CI_Controller
 					"detalleservicios" => $detalleservicios,
 					'tipodoc' => $tipodoc,
 					'rowpc' => $rowpc,
-					"sucursal" => $this->ventas->get_detail_rows("sucursales", array('1' => 1,)),
+					"sucursal" => $this->taller->get_detail_rows("sucursales", array('1' => 1,)),
 					"id_sucursal" => $row->id_sucursal,
 					"rowc" => $rowc,
 					"row_clientes" => $row_clientes,
@@ -2575,11 +2581,11 @@ class Taller extends CI_Controller
 		//echo $vendedor;
 		//encabezado
 		$id_usuario = $rowvta->id_usuario;
-		$row_hf = $this->ventas->get_one_row("config_pos", array('id_sucursal' => $id_sucursal, 'alias_tipodoc' => 'TIK',));
-		$row_user = $this->ventas->get_one_row("usuario", array('id_usuario' => $id_usuario,));
+		$row_hf = $this->taller->get_one_row("config_pos", array('id_sucursal' => $id_sucursal, 'alias_tipodoc' => 'TIK',));
+		$row_user = $this->taller->get_one_row("usuario", array('id_usuario' => $id_usuario,));
 
 		//Procedemos a obtener los datos del vendedor
-		$row_vendedor = $this->ventas->get_one_row("usuario", array('id_usuario' => $vendedor,));
+		$row_vendedor = $this->taller->get_one_row("usuario", array('id_usuario' => $vendedor,));
 
 		$hstring = "";
 		$line1 = str_repeat("_", 42) . "\n";
@@ -2646,7 +2652,7 @@ class Taller extends CI_Controller
 		$th = chr(13) . " DESCRIPCION    CANT.    P.U      SUBTOTAL" . "\n";
 		$det_ticket .= chr(13) . $th;
 		$det_ticket .= chr(13) . $line1;
-		$detalleproductos = $this->ventas->get_detail_ci($id_trabajo_taller);
+		$detalleproductos = $this->taller->get_detail_ci($id_trabajo_taller);
 		$espacio = " ";
 		$margen_izq1 = AlignMarginText::leftmargin($espacio, 2);
 		$margen_izq2 = AlignMarginText::leftmargin($espacio, 3);
@@ -2666,7 +2672,7 @@ class Taller extends CI_Controller
 			}
 		}
 		//detalles servicios
-		$detalleservicios = $this->ventas->get_detail_serv($id_trabajo_taller);
+		$detalleservicios = $this->taller->get_detail_serv($id_trabajo_taller);
 		if ($detalleservicios != NULL) {
 			foreach ($detalleservicios as $detalle) {
 				$id_producto = $detalle->id_producto;
@@ -2704,7 +2710,7 @@ class Taller extends CI_Controller
 	{
 
 		//Cliente
-		$row_cte = $this->ventas->get_one_row("clientes", array('id_cliente' => $rowvta->id_cliente,));
+		$row_cte = $this->taller->get_one_row("clientes", array('id_cliente' => $rowvta->id_cliente,));
 
 		list($anio, $mes, $dia) = explode("-", $rowvta->fecha);
 		//inicio header print_cof
@@ -2727,11 +2733,11 @@ class Taller extends CI_Controller
 			$hstring .= chr(13) . "\n"; // Print text
 		}
 		//fin header print_cof
-		//$row_confpos=$this->ventas->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
+		//$row_confpos=$this->taller->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
 		//detalle de la venta
-		//$rowvta = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+		//$rowvta = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 		//detalles productos
-		$detalleproductos = $this->ventas->get_detail_ci($id_trabajo_taller);
+		$detalleproductos = $this->taller->get_detail_ci($id_trabajo_taller);
 		$margen_izq0 = AlignMarginText::leftmargin($espacio, 1);
 		$margen_izq = AlignMarginText::leftmargin($espacio, 3);
 		$lineas = 0;
@@ -2751,7 +2757,7 @@ class Taller extends CI_Controller
 			}
 		}
 		//detalles servicios
-		$detalleservicios = $this->ventas->get_detail_serv($id_trabajo_taller);
+		$detalleservicios = $this->taller->get_detail_serv($id_trabajo_taller);
 
 		if ($detalleservicios != NULL) {
 			foreach ($detalleservicios as $detalle) {
@@ -2838,12 +2844,12 @@ class Taller extends CI_Controller
 
 		$info_factura = "";
 		//header print_cof
-		$row_confpos = $this->ventas->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
+		$row_confpos = $this->taller->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
 		$info_factura .= "DESCRIPCION  CANT.  P. UNIT    SUBTOT.\n|";
 		//encabezado de la venta
-		$rowvta = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+		$rowvta = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 		//detalles productos
-		$detalleproductos = $this->ventas->get_detail_ci($id_trabajo_taller);
+		$detalleproductos = $this->taller->get_detail_ci($id_trabajo_taller);
 		$espacio = "&nbsp;";
 		$espacio = " ";
 		$margen_izq = AlignMarginText::leftmargin($espacio, 2);
@@ -2865,7 +2871,7 @@ class Taller extends CI_Controller
 			}
 		}
 		//detalles servicios
-		$detalleservicios = $this->ventas->get_detail_serv($id_trabajo_taller);
+		$detalleservicios = $this->taller->get_detail_serv($id_trabajo_taller);
 		if ($detalleservicios != NULL) {
 			foreach ($detalleservicios as $detalle) {
 				$id_producto = $detalle->id_producto;
@@ -2890,10 +2896,10 @@ class Taller extends CI_Controller
 				$opsys = $this->agent->platform();
 			}
 			$id_trabajo_taller = $this->input->post("id_trabajo_taller");
-			$rowvta = $this->ventas->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
+			$rowvta = $this->taller->get_one_row("trabajos_taller", array('id_trabajo_taller' => $id_trabajo_taller,));
 			if ($rowvta != NULL) {
 				$id_sucursal = $rowvta->id_sucursal;
-				$row_confdir = $this->ventas->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
+				$row_confdir = $this->taller->get_one_row("config_dir", array('id_sucursal' => $id_sucursal,));
 				$tot_letras = NumeroALetras::convertir($rowvta->total, 'Dolares', false, 'centavos');
 				$total_letras = wordwrap(strtoupper($tot_letras), 40) . "\n";
 				$tipodoc = $rowvta->tipo_doc;
@@ -2924,6 +2930,68 @@ class Taller extends CI_Controller
 			}
 		}
 	}
+
+	/* Mostrar modal de Creación de clientes */
+	function new_data_client($id = -1)
+	{
+
+		if ($this->input->method(TRUE) == "GET") {
+			$clasifica_cliente = $this->clientes->get_clasifica_cliente();
+			$data = array(
+				"clasifica_cliente" => $clasifica_cliente,
+			);
+			$this->load->view("taller/new_client_modal.php", $data);
+		} else {
+			redirect('errorpage');
+		}
+	}
+
+	function save_data_client()
+	{
+		if ($this->input->method(TRUE) == "POST") {
+			$errors = false;
+			$this->utils->begin();
+			$nomcte = strtoupper($this->input->post("nombre"));
+			$nit = $this->input->post("nit");
+			$dui = $this->input->post("dui");
+			$nrc = $this->input->post("nrc");
+			$clasifica = $this->input->post("clasifica");
+			$form_data = array(
+				'nombre' => $nomcte,
+				'nombre_comercial' => $nomcte,
+				'direccion' => "SAN MIGUEL, EL SALVADOR",
+				'clasifica' => $clasifica,
+				'dui' => $dui,
+				'nit' => $nit,
+				'nrc' => $nrc,
+				'departamento' => 13,
+				'municipio' => 81,
+				'activo' => 1,
+			);
+			$id_cliente = $this->taller->inAndCon("clientes", $form_data);
+			if ($id_cliente == NULL) {
+				$errors = true;
+			}
+			if ($errors == true) {
+
+				$this->utils->rollback();
+				$xdatos["type"] = "error";
+				$xdatos['title'] = 'Alerta';
+				$xdatos["msg"] = "Error al ingresar el registro";
+				$xdatos["id_cliente"] = -1;
+				$xdatos["nomcte"] = " ";
+			} else {
+				$this->utils->commit();
+
+				$xdatos["type"] = "success";
+				$xdatos['title'] = 'Alerta';
+				$xdatos["msg"] = "Exito al ingresar el registro";
+				$xdatos["id_cliente"] = $id_cliente;
+				$xdatos["nomcte"] = $nomcte;
+			}
+			echo json_encode($xdatos);
+		}
+	}
 }
 
-/* End of file Ventas.php */
+/* End of file Taller.php */

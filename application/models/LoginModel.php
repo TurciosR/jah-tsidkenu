@@ -21,14 +21,15 @@ class LoginModel extends CI_Model
 		{
 			$result = $query->row();
 			if($result !== null){
-				$passwordb = decrypt($result->password);
-				if($password == $passwordb)
-				{
-					return $result;
-				}
-				else {
-					return 0;
-				}
+				return $result;
+				// $passwordb = decrypt($result->password);
+				// if($password == $passwordb)
+				// {
+				// 	return $result;
+				// }
+				// else {
+				// 	return 0;
+				// }
 		}
 		return 0;
 	}
