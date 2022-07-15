@@ -758,13 +758,13 @@ function save_data() {
   });
   var json_arr = '[' + array_json + ']';
   $("#data_ingreso").val(json_arr);
-  if (cuantos == 0) {
-    errors = true;
-    error_array.push('Llene los datos de al menos un producto');
-    $("#main_view").show();
-    $("#divh").hide();
-    $("#btn_add_new").prop("disabled", false)
-  }
+  // if (cuantos == 0) {
+  //   errors = true;
+  //   error_array.push('Llene los datos de al menos un producto');
+  //   $("#main_view").show();
+  //   $("#divh").hide();
+  //   $("#btn_add_new").prop("disabled", false)
+  // }
 
   if (errors == false) {
     let form = $("#form_add");

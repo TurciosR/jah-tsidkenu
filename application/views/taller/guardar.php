@@ -6,7 +6,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <div class="col-lg-12">
       <div class="ibox" id="main_view">
         <div class="ibox-title">
-          <h3 class="text-success"><b><i class="mdi mdi-plus"></i> Taller</b></h3>
+          <h3 class="text-success"><b><i class="mdi mdi-plus"></i> Nuevo trabajo de taller</b></h3>
         </div>
 
         <div class="ibox-content">
@@ -48,17 +48,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 </div>
                 <div class="col-lg-3">
                   <div class="form-group">
-                    <label for="fecha">Fecha Venta<span class="text-danger">*</span></label>
+                    <label for="fecha">Fecha de Ingreso<span class="text-danger">*</span></label>
                     <input type="text" name="fecha" id="fecha" class="form-control datepicker" placeholder="Seleccione una fecha" value="<?= date("d-m-Y") ?>" required data-parsley-trigger="change">
                   </div>
                 </div>
 
 
                 <div class="form-actions col-sm-3">
-                  <label for="fecha">Guardar Venta</label>
+                  <label for="fecha">Guardar</label>
                   <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" id="csrf_token_id">
                   <button style="width:100%;" type="submit" id="btn_add_new" name="btn_add_new" class="btn btn-success float-right"><i class="mdi mdi-content-save"></i>
-                    F2 Guardar Venta
+                    F2 Guardar
                   </button>
                 </div>
                 <input type="hidden" id="id_sucursal" name="id_sucursal" value="<?php echo $id_sucursal; ?>">
@@ -106,6 +106,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
                   <div class="form-group">
                     <label for="concepto">Concepto de trabajo</label>
                     <textarea name="concepto" id="concepto" style="width:100%" rows="3" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <!-- bootstrap info alert -->
+                <div class="col-lg-12">
+                  <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong>Nota</strong> Puede guardar el trabajo sin ningun producto o servicio y actualizar esta informacion mas adelante
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
                   </div>
                 </div>
               </div>

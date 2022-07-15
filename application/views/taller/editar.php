@@ -52,15 +52,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                     <div class="col-lg-3">
                       <div class="form-group">
-                        <label for="fecha">Fecha Venta<span class="text-danger">*</span></label>
+                        <label for="fecha">Fecha de ingreso<span class="text-danger">*</span></label>
                         <input type="text" name="fecha" id="fecha" class="form-control datepicker" placeholder="Seleccione una fecha" value="<?= d_m_y($row->fecha) ?>" required data-parsley-trigger="change">
                       </div>
                     </div>
                     <div class="form-actions col-sm-3">
-                      <label for="fecha">Guardar Venta</label>
+                      <label for="fecha">Guardar</label>
                       <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" id="csrf_token_id">
                       <button style="width:100%" type="submit" id="btn_add" name="btn_add" class="btn btn-success float-right"><i class="mdi mdi-content-save"></i>
-                        Guardar Venta
+                        Actualizar datos
                       </button>
                     </div>
                     <input type="hidden" id="id_sucursal" name="id_sucursal" value="<?php echo $id_sucursal; ?>">

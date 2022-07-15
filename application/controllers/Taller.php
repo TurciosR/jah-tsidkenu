@@ -165,10 +165,10 @@ class Taller extends CI_Controller
 					$menudrop .= "<li><a  class='delete_row'  id=" . $rows->id_trabajo_taller . " ><i class='mdi mdi-trash-can-outline'></i> Eliminar</a></li>";
 					$menudrop .= "<li><a  class='state_change'  data-state='Anular'  id=" . $rows->id_trabajo_taller . " ><i class='$icon'></i> Anular</a></li>";
 				}
-				if ($rows->id_estado == 2 && $rows->nombredoc != "DEVOLUCION") {
-					$filename = base_url("taller/devolver/");
-					$menudrop .= "<li><a role='button' href='" . $filename . $rows->id_trabajo_taller . "' ><i class='mdi mdi-square-edit-outline' ></i> Devolución</a></li>";
-				}
+				// if ($rows->id_estado == 2 && $rows->nombredoc != "DEVOLUCION") {
+				// 	$filename = base_url("taller/devolver/");
+				// 	$menudrop .= "<li><a role='button' href='" . $filename . $rows->id_trabajo_taller . "' ><i class='mdi mdi-square-edit-outline' ></i> Devolución</a></li>";
+				// }
 				$menudrop .= "<li><a  data-toggle='modal' data-target='#viewModal' data-refresh='true'  role='button' class='detail' data-id=" . $rows->id_trabajo_taller . "><i class='mdi mdi-eye-check' ></i> Detalles</a></li>";
 
 				$menudrop .= "</ul></div>";
@@ -179,7 +179,7 @@ class Taller extends CI_Controller
 					$rows->fecha,
 					$rows->nombre,
 					$rows->concepto,
-					'$ '.$rows->total,
+					'$ ' . $rows->total,
 					$rows->descripcion,
 					$detalleV->detalle_v,
 					$menudrop,
@@ -715,6 +715,13 @@ class Taller extends CI_Controller
 			echo json_encode($xdatos);
 		}
 	}
+
+	/**
+	 * Se utiliza para finalizar un trabajo de taller y generar un registro en la tabla ventas
+	 * @param $id_trabajo_taller
+	 * 
+	 * @return mixed
+	 */
 	function finalizar($id = -1)
 	{
 		if ($this->input->method(TRUE) == "GET") {
@@ -883,10 +890,13 @@ class Taller extends CI_Controller
 				'hora_fin' => $hora,
 			);
 
-
 			/*editar encabezado*/
 			$this->utils->update('trabajos_taller', $data, "id_trabajo_taller=$id_trabajo_taller");
-			$id_venta = $this->ventas->inAndCon('ventas',$data);
+			$data['concepto'] = "FACTURACION DE TRABAJO DE TALLER NRO. " . $id_trabajo_taller;
+			$id_venta = $this->ventas->inAndCon('ventas', $data);
+
+			// Asociamos la venta con el trabajo del taller
+			$this->utils->update('trabajos_taller', ['id_venta' => $id_venta], "id_trabajo_taller=$id_trabajo_taller");
 
 			/*Cargo los detalles previos*/
 			$detalles_previos = $this->taller->get_detail_ci($id_trabajo_taller);
@@ -934,10 +944,10 @@ class Taller extends CI_Controller
 						'id_precio_producto' => $id_precio,
 					);
 					$id_detalle = $this->taller->inAndCon('trabajos_taller_detalle', $form_data);
-					
+
 					unset($form_data['id_trabajo_taller']);
 					$form_data['id_venta'] = $id_venta;
-					$id_detalle_v = $this->ventas->inAndCon('ventas_detalle',$form_data);
+					$id_detalle_v = $this->ventas->inAndCon('ventas_detalle', $form_data);
 					$this->utils->update(
 						"producto",
 						array(
@@ -961,6 +971,7 @@ class Taller extends CI_Controller
 			$xdatos['title'] = 'Información';
 			$xdatos["msg"] = "Facturacion guardada correctamente!";
 			$xdatos["id_factura"] = $id_trabajo_taller;
+			$xdatos["id_venta"] = $id_venta;
 			$xdatos["proceso"] = "finalizar";
 
 			echo json_encode($xdatos);
@@ -1238,6 +1249,7 @@ class Taller extends CI_Controller
 			$errors = false;
 			$this->utils->begin();
 			$id_trabajo_taller = $this->input->post("id_tr_taller");
+			$id_venta = $this->input->post("id_vta");
 			$concepto = $this->input->post("cncpto");
 			$id_cliente = $this->input->post("id_client");
 			//$vendedor = $this->input->post("vendedor");
@@ -1342,6 +1354,8 @@ class Taller extends CI_Controller
 						'caja' => $caja,
 					);
 					$this->utils->update("trabajos_taller", $form_cte, "id_trabajo_taller=$id_trabajo_taller");
+					$form_cte['concepto'] = "FACTURACION DE TRABAJO DE TALLER NRO. " . $id_trabajo_taller;
+					$this->utils->update("ventas", $form_cte, "id_venta=$id_venta");
 					if ($tipo_pago == 3) { //si es pago credito
 						$abono = $efectivo;
 						//$saldo=$rowvta->total-$abono;
@@ -1354,7 +1368,7 @@ class Taller extends CI_Controller
 							$estado_cxc = 0;
 						}
 						$arr_cxc = array(
-							'id_trabajo_taller' => $id_trabajo_taller,
+							'id_venta' => $id_venta,
 							'abono'	=> 0,
 							'saldo' => $saldo,
 							'estado' => $estado_cxc,
@@ -1397,6 +1411,7 @@ class Taller extends CI_Controller
 					'caja' => $caja,
 				);
 				$this->utils->update("trabajos_taller", $form_cte, "id_trabajo_taller=$id_trabajo_taller");
+				$this->utils->update("ventas", $form_cte, "id_venta=$id_venta");
 				if ($tipo_pago == 3) { //si es pago credito
 					$abono = $efectivo;
 					//$saldo=$rowvta->total-$abono;
@@ -1409,7 +1424,7 @@ class Taller extends CI_Controller
 						$estado_cxc = 0;
 					}
 					$arr_cxc = array(
-						'id_trabajo_taller' => $id_trabajo_taller,
+						'id_venta' => $id_venta,
 						'abono'	=> 0,
 						'saldo' => $saldo,
 						'estado' => $estado_cxc,
@@ -1828,13 +1843,13 @@ class Taller extends CI_Controller
 			$id_sucursal = $row->id_sucursal;
 			/*descargar los detalles previos*/
 			$detalles_previos = $this->taller->get_detail_rows("trabajos_taller_detalle", array('id_trabajo_taller' => $id_trabajo_taller,));
-			foreach ($detalles_previos as $key) {
-				// code...
-
-				if ($key->tipo_prod == 0) {
-					$stock_data = $this->taller->get_stock($key->id_producto, $key->id_color, $id_sucursal);
-					$newstock = ($stock_data->cantidad) + ($key->cantidad);
-					$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
+			if ($detalles_previos) {
+				foreach ($detalles_previos as $key) {
+					if ($key->tipo_prod == 0) {
+						$stock_data = $this->taller->get_stock($key->id_producto, $key->id_color, $id_sucursal);
+						$newstock = ($stock_data->cantidad) + ($key->cantidad);
+						$this->utils->update("stock", array('cantidad' => $newstock,), "id_stock=" . $stock_data->id_stock);
+					}
 				}
 			}
 			/*eliminar detalles previos*/
@@ -2023,6 +2038,8 @@ class Taller extends CI_Controller
 			redirect('errorpage');
 		}
 	}
+
+	// FUNCIONES PARA GENERAR LA FACTURACION
 	public function detalle_servicio($id = 0)
 	{
 		if ($id == 0) {
@@ -2185,6 +2202,10 @@ class Taller extends CI_Controller
 		$xdatos["msg"] = "Cliente Seleccionado";
 		echo json_encode($xdatos);
 	}
+
+
+
+	// FUNCIONES PARA GUARDAR LA INFO DE FACTURACION
 	function facturar()
 	{
 		if ($this->input->method(TRUE) == "GET") {

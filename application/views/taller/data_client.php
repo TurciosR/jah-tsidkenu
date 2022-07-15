@@ -14,10 +14,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <div class="modal-body">
   <form id="form_edit_cte" data-parsley-validate>
   <input type="hidden" name="id_tr_taller" id="id_tr_taller" value="<?=$row->id_trabajo_taller?>">
+  <input type="hidden" name="id_vta" id="id_vta" value="<?=$row->id_venta?>">
   <input type="hidden" name="cncpto" id="cncpto" value="<?=$row->concepto?>">
   <input type="hidden" name="process" id="process" value="">
-    <input type="hidden" name="id_client" id="id_client" value="<?=$rowcte->id_cliente?>">
-    <input type="hidden" name="clasifica" id="clasifica" value="<?=$rowcte->clasifica?>">
+  <input type="hidden" name="id_client" id="id_client" value="<?=$rowcte->id_cliente?>">
+  <input type="hidden" name="clasifica" id="clasifica" value="<?=$rowcte->clasifica?>">
     <div class="row">
         <div class="col-lg-12 big-font">
             <div class="form-group single-line">
