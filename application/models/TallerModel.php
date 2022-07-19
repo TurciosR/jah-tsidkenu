@@ -515,16 +515,27 @@ function get_tipodoc_alias($alias){
 		}
 	}
 
+	function get_detalle_serv($id_trabajo_taller){
+		$sql = $this->db->query("SELECT GROUP_CONCAT(CONCAT_WS(' ' , s.nombre) SEPARATOR '<br><br>')
+			as detalle_s FROM trabajos_taller_detalle as vd INNER JOIN servicio as s ON s.id_servicio = vd.id_producto
+			WHERE vd.id_trabajo_taller = $id_trabajo_taller AND vd.tipo_prod = 1");
+		if ($sql->num_rows() > 0) {
+		return $sql->row();
+		} else {
+		return 0;
+		}
+	}
+
 	function get_detalle_venta($id_trabajo_taller){
-    $sql = $this->db->query("SELECT GROUP_CONCAT(CONCAT_WS(' ' , p.nombre , p.modelo, c.color) SEPARATOR '<br><br>')
-		as detalle_v FROM trabajos_taller_detalle as vd INNER JOIN producto as p ON p.id_producto = vd.id_producto
-		INNER JOIN producto_color as c ON c.id_color = vd.id_color WHERE vd.id_trabajo_taller = $id_trabajo_taller");
-    if ($sql->num_rows() > 0) {
-      return $sql->row();
-    } else {
-      return 0;
-    }
-  }
+		$sql = $this->db->query("SELECT GROUP_CONCAT(CONCAT_WS(' ' , p.nombre , p.modelo, c.color) SEPARATOR '<br><br>')
+			as detalle_v FROM trabajos_taller_detalle as vd INNER JOIN producto as p ON p.id_producto = vd.id_producto
+			INNER JOIN producto_color as c ON c.id_color = vd.id_color WHERE vd.id_trabajo_taller = $id_trabajo_taller");
+		if ($sql->num_rows() > 0) {
+		return $sql->row();
+		} else {
+		return 0;
+		}
+	}
 }
 // function get_one_row_limit($tabla,$where){
 // 	foreach ($where as $key => $value) {

@@ -810,7 +810,7 @@ function show_reference(type, title, msg, referencia, total) {
 
   Swal.fire({
 
-    title: "<b>Referencia <i># " + referencia + "</i><br>$ " + total + "</b>",
+    title: "<b>Trabajo No. <i># " + referencia + "</i><br>$ " + total + "</b>",
     type: type,
     text: msg,
     showCancelButton: false,
@@ -2024,14 +2024,16 @@ $(document).on('change', '#client', function (event) {
 });
 //reimpresion de ticket venta
 $(document).on("click", ".printicket", function () {
-
-  var id_trabajo_taller = $('#id_tr_taller').val();
+  console.log("hooa");
+  var id_trabajo_taller = $('#id_tr').val();
   $.ajax({
     type: 'POST',
     url: url + '/printdoc',
     data: "id_trabajo_taller=" + id_trabajo_taller + "&csrf_test_name=" + token + "&process=print",
     dataType: 'json',
     success: function (data) {
+
+      console.log(data);
       notification(data.type, data.title, data.msg);
       var efectivo = data.totales;
       var cambio = 0.0;

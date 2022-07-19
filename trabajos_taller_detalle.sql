@@ -52,6 +52,7 @@ CREATE TABLE `trabajos_taller_detalle` (
 --
 -- Indices de la tabla `trabajos_taller_detalle`
 --
+
 ALTER TABLE `trabajos_taller_detalle`
   ADD PRIMARY KEY (`id_detalle`);
 
@@ -69,3 +70,6 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- agregamos el correlativo para los trabajos de taller
+ALTER TABLE `correlativo` ADD `reftaller` INT NOT NULL AFTER `refdia`;

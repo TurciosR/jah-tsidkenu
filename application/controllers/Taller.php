@@ -93,7 +93,7 @@ class Taller extends CI_Controller
 				),
 			),
 			"table" => array(
-				"Id" => 5,
+				"No." => 5,
 				"Fecha" => 5,
 				"Cliente" => 15,
 				"Concepto" => 35,
@@ -153,6 +153,7 @@ class Taller extends CI_Controller
 			foreach ($row as $rows) {
 				//procedemos a obtener el detalle de la venta
 				$detalleV = $this->taller->get_detalle_venta($rows->id_trabajo_taller);
+				$detalleS = $this->taller->get_detalle_serv($rows->id_trabajo_taller);
 				$menudrop = "<div class='btn-group'>
 				<button data-toggle='dropdown' class='btn btn-success dropdown-toggle' aria-expanded='false'><i class='mdi mdi-menu' aria-haspopup='false'></i> Menu</button>
 				<ul class='dropdown-menu dropdown-menu-right' x-placement='bottom-start'>";
@@ -172,7 +173,9 @@ class Taller extends CI_Controller
 				$menudrop .= "<li><a  data-toggle='modal' data-target='#viewModal' data-refresh='true'  role='button' class='detail' data-id=" . $rows->id_trabajo_taller . "><i class='mdi mdi-eye-check' ></i> Detalles</a></li>";
 
 				$menudrop .= "</ul></div>";
-
+				
+				$spacing = $detalleV->detalle_v != "" ? "<br><br>" : "";
+				$stringserv = $detalleS->detalle_s != "" ? $spacing . $detalleS->detalle_s : "";
 
 				$data[] = array(
 					$rows->id_trabajo_taller,
@@ -181,7 +184,7 @@ class Taller extends CI_Controller
 					$rows->concepto,
 					'$ ' . $rows->total,
 					$rows->descripcion,
-					$detalleV->detalle_v,
+					$detalleV->detalle_v . $stringserv,
 					$menudrop,
 				);
 			}
@@ -229,7 +232,7 @@ class Taller extends CI_Controller
 					"rowserv" => $rowserv,
 					"process" => "venta",
 				);
-				$this->load->view("ventas/ver_detalle.php", $data);
+				$this->load->view("taller/ver_detalle.php", $data);
 			} else {
 				//redirect('errorpage');
 			}
@@ -404,14 +407,10 @@ class Taller extends CI_Controller
 			$hora = date("H:i:s");
 
 			$correlativo = $this->taller->get_max_correlative('ven', $id_sucursal);
-			$fecha_corr = $this->taller->get_date_correlative($id_sucursal);
-			if ($fecha == $fecha_corr) {
-				$referencia = $this->taller->get_correlative('refdia', $id_sucursal);
-				$this->utils->update("correlativo", array("refdia" => $referencia,), "id_sucursal=" . $id_sucursal);
-			} else {
-				$referencia = 1;
-				$this->utils->update("correlativo", array('fecha' => $fecha, "refdia" => $referencia,), "id_sucursal=" . $id_sucursal);
-			}
+
+			$referencia = $this->taller->get_correlative('reftaller', $id_sucursal);
+			$this->utils->update("correlativo", array("reftaller" => $referencia,), "id_sucursal=" . $id_sucursal);
+
 			$data = array(
 				'fecha' => $fecha,
 				'hora' => $hora,
@@ -482,7 +481,7 @@ class Taller extends CI_Controller
 				}
 				$this->utils->commit();
 				$xdatos["type"] = "success";
-				$xdatos["referencia"] = $referencia;
+				$xdatos["referencia"] = $id_trabajo_taller;
 				$xdatos['title'] = 'Información';
 				$xdatos["msg"] = "Registo ingresado correctamente!";
 			} else {
@@ -2909,6 +2908,106 @@ class Taller extends CI_Controller
 		}
 		return $info_factura;
 	}
+
+	function print_voucher($id_trabajo_taller, $id_sucursal, $correlativo, $rowvta, $vendedor)
+	{
+		//echo $vendedor;
+		//encabezado
+		$id_usuario = $rowvta->id_usuario;
+		$row_hf = $this->taller->get_one_row("config_pos", array('id_sucursal' => $id_sucursal, 'alias_tipodoc' => 'TIK',));
+		$row_user = $this->taller->get_one_row("usuario", array('id_usuario' => $id_usuario,));
+
+		//Procedemos a obtener los datos del vendedor
+		$row_vendedor = $this->taller->get_one_row("usuario", array('id_usuario' => $vendedor,));
+
+		$hstring = "";
+		$line1 = str_repeat("_", 42) . "\n";
+
+		$hstring .= chr(27) . chr(33) . chr(16); //FONT double size
+		$hstring .= chr(27) . chr(97) . chr(1); //Center
+		if ($row_hf->header1 != '')
+
+		$hstring .= chr(13) . $row_hf->header1 . "\n";
+		$hstring .= chr(27) . chr(33) . chr(0); //FONT A normal size
+		if ($row_hf->header2 != '')
+			$hstring .= chr(13) . $row_hf->header2 . "\n";
+		if ($row_hf->header3 != '')
+			$hstring .= chr(13) . $row_hf->header3 . "\n";
+		if ($row_hf->header4 != '')
+			$hstring .= chr(13) . $row_hf->header4 . "\n";
+		if ($row_hf->header5 != '')
+			$hstring .= chr(13) . $row_hf->header5 . "\n";
+		if ($row_hf->header6 != '')
+			$hstring .= chr(13) . $row_hf->header6 . "\n";
+		if ($row_hf->header7 != '')
+			$hstring .= chr(13) . $row_hf->header7 . "\n";
+		if ($row_hf->header8 != '')
+			$hstring .= chr(13) . $row_hf->header8 . "\n";
+		if ($row_hf->header9 != '')
+			$hstring .= chr(13) . $row_hf->header9 . "\n";
+		if ($row_hf->header10 != '')
+			$hstring .= chr(13) . $row_hf->header10 . "\n";
+
+		//pie
+		if ($row_hf->footer1 != '')
+			$pstring = chr(13) . $row_hf->footer1 . "\n";
+		if ($row_hf->footer2 != '')
+			$pstring .= chr(13) . $row_hf->footer2 . "\n";
+		if ($row_hf->footer3 != '')
+			$pstring .= chr(13) . $row_hf->footer3 . "\n";
+		if ($row_hf->footer4 != '')
+			$pstring .= chr(13) . $row_hf->footer4 . "\n";
+		if ($row_hf->footer5 != '')
+			$pstring .= chr(13) . $row_hf->footer5 . "\n";
+		if ($row_hf->footer6 != '')
+			$pstring .= chr(13) . $row_hf->footer6 . "\n";
+		if ($row_hf->footer7 != '')
+			$pstring .= chr(13) . $row_hf->footer7 . "\n";
+		if ($row_hf->footer8 != '')
+			$pstring .= chr(13) . $row_hf->footer8 . "\n";
+		if ($row_hf->footer9 != '')
+			$pstring .= chr(13) . $row_hf->footer9 . "\n";
+		if ($row_hf->footer10 != '')
+			$pstring .= chr(13) . $row_hf->footer10 . "\n";
+		//detalles productos
+		$det_ticket = "";
+		$hstring .= chr(13) . " FECHA: " .	d_m_Y($rowvta->fecha) . " HORA:" . $rowvta->hora . "\n";
+		$hstring .= chr(13) . " CAJA #: " . $rowvta->caja . "\n";
+		$hstring .= chr(13) . " CAJERO: " . $row_user->nombre . "\n";
+		//Procedemos a insertar el vendedor
+		$hstring .= chr(13) . "VENDEDOR: " . $row_user->nombre . "\n";
+		$tiq = str_pad($correlativo, 10, '0', STR_PAD_LEFT);
+		$hstring .= chr(13) . " TICKET #: " . $tiq . "\n";
+		$det_ticket .= chr(27) . chr(97) . chr(0); //Left
+		$det_ticket .= chr(13) . $line1 . "\n"; // Print text Lin
+		//$det_ticket.=chr(13)."\n"; // Print text
+		//$det_ticket.= chr(27).chr(97).chr(0); //Center
+		$th = chr(13) . " DESCRIPCION    CANT.    P.U      SUBTOTAL" . "\n";
+		$det_ticket .= chr(13) . $th;
+		$det_ticket .= chr(13) . $line1;
+		$detalleproductos = $this->taller->get_detail_ci($id_trabajo_taller);
+		$espacio = " ";
+		$margen_izq1 = AlignMarginText::leftmargin($espacio, 2);
+		$margen_izq2 = AlignMarginText::leftmargin($espacio, 3);
+
+		$det_ticket .= chr(13) . $line1;
+		$det_ticket .= chr(27) . chr(33) . chr(0); //FONT A
+		$det_ticket .= chr(27) . chr(97) . chr(1); //Center align
+		$totales = chr(27) . chr(33) . chr(16); //FONT A
+		$totales .= chr(27) . chr(97) . chr(2); //Right align
+		$totals = "  TOTAL   $ " . "   " . "\n";
+		$lentot = strlen($totals);
+		$totales .= $totals;
+		$totales .= chr(27) . chr(33) . chr(0); //FONT A
+		$l2 = str_repeat("_", $lentot) . "\n";
+		$totales .= $l2;
+		$xdatos["encabezado"] = $hstring;
+		$xdatos["totales"] = $totales;
+		$xdatos["cuerpo"] = $det_ticket;
+		$xdatos["pie"] = $pstring;
+		return $xdatos;
+	}
+	
 	function printdoc($id = -1)
 	{
 		if ($this->input->method(TRUE) == "POST") {

@@ -48,7 +48,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
               </div>
               <div class="col-lg-3">
                 <div class="form-group">
-                    <label for="fecha">Fecha Venta<span class="text-danger">*</span></label>
+                    <label for="fecha">Fecha<span class="text-danger">*</span></label>
                   <input type="text" name="fecha" id="fecha" class="form-control datepicker"
                   placeholder="Seleccione una fecha" value="<?=d_m_y($row->fecha)?>"
                   required data-parsley-trigger="change">
@@ -58,7 +58,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
               <input type="hidden" id="id_sucursal" name="id_sucursal" value="<?php echo $id_sucursal;?>">
               <div class="col-lg-3">
                 <div class="form-group">
-                  <label for="tipodoc">Tipo Venta<span class="text-danger">*</span></label>
+                  <label for="tipodoc">Tipo de pago<span class="text-danger">*</span></label>
                   <select data-parsley-trigger="change" style="width:100%" required class="select2" id="tipodoc" name="tipodoc">
                     <?php foreach ($tipodoc as $key): ?>
                       <option value="<?=$key->idtipodoc;?>"><?=$key->nombredoc?></option>
@@ -99,7 +99,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 value="<?php echo $this->security->get_csrf_hash(); ?>" id="csrf_token_id">
                 <button style="width:100%" type="submit" id="btn_add" name="btn_add" class="btn btn-success float-right" data-toggle="modal"  data-target="#viewModal"  data-id="<?=$row->id_trabajo_taller?>">
                   <i class="mdi mdi-content-save"></i>
-                 Guardar Venta
+                 Guardar
               </button>
               <!--button style="width:100%;" type="submit" id="btn_add" name="btn_add" class="btn btn-success float-right"><i class="mdi mdi-content-save"></i>
               F2 Guardar Venta
