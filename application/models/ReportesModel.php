@@ -348,6 +348,25 @@ class ReportesModel extends CI_Model
 			return 0;
 		}
 	}
+
+	function get_trabajos_taller_rango($fechaI, $fechaF, $sucursal){
+
+			$arrTrabajos =[];
+			$sql = $this->db->query("SELECT tr.*, c.nombre as cnombre, e.descripcion as estado FROM trabajos_taller as tr
+									JOIN clientes as c ON c.id_cliente=tr.id_cliente
+									JOIN estado as e ON tr.id_estado = e.id_estado
+									WHERE tr.fecha BETWEEN '".$fechaI."' AND '".$fechaF."' AND tr.id_sucursal='$sucursal'");
+
+			if ($sql->num_rows()>0) {
+				return $sql->result();
+			}
+			else {
+				// code...
+				return 0;
+			}
+
+	  }
+
 	function get_movimientos($tipo, $sucursal, $fechaIni, $fechaFin){
 		$this->db->where("id_sucursal", $sucursal);
 		$this->db->where("fecha BETWEEN '".$fechaIni."' AND '".$fechaFin."'");

@@ -515,6 +515,17 @@ function get_tipodoc_alias($alias){
 		}
 	}
 
+	function get_detalle_serv($id_venta){
+		$sql = $this->db->query("SELECT GROUP_CONCAT(CONCAT_WS(' ' , s.nombre) SEPARATOR '<br><br>')
+			as detalle_s FROM ventas_detalle as vd INNER JOIN servicio as s ON s.id_servicio = vd.id_producto
+			WHERE vd.id_venta = $id_venta AND vd.tipo_prod = 1");
+		if ($sql->num_rows() > 0) {
+		return $sql->row();
+		} else {
+		return 0;
+		}
+	}
+
 	function get_detalle_venta($id_venta){
     $sql = $this->db->query("SELECT GROUP_CONCAT(CONCAT_WS(' ' , p.nombre , p.modelo, c.color) SEPARATOR '<br><br>')
 		as detalle_v FROM ventas_detalle as vd INNER JOIN producto as p ON p.id_producto = vd.id_producto

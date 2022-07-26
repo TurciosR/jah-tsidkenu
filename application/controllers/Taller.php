@@ -173,7 +173,7 @@ class Taller extends CI_Controller
 				$menudrop .= "<li><a  data-toggle='modal' data-target='#viewModal' data-refresh='true'  role='button' class='detail' data-id=" . $rows->id_trabajo_taller . "><i class='mdi mdi-eye-check' ></i> Detalles</a></li>";
 
 				$menudrop .= "</ul></div>";
-				
+
 				$spacing = $detalleV->detalle_v != "" ? "<br><br>" : "";
 				$stringserv = $detalleS->detalle_s != "" ? $spacing . $detalleS->detalle_s : "";
 
@@ -2927,7 +2927,7 @@ class Taller extends CI_Controller
 		$hstring .= chr(27) . chr(97) . chr(1); //Center
 		if ($row_hf->header1 != '')
 
-		$hstring .= chr(13) . $row_hf->header1 . "\n";
+			$hstring .= chr(13) . $row_hf->header1 . "\n";
 		$hstring .= chr(27) . chr(33) . chr(0); //FONT A normal size
 		if ($row_hf->header2 != '')
 			$hstring .= chr(13) . $row_hf->header2 . "\n";
@@ -3007,7 +3007,7 @@ class Taller extends CI_Controller
 		$xdatos["pie"] = $pstring;
 		return $xdatos;
 	}
-	
+
 	function printdoc($id = -1)
 	{
 		if ($this->input->method(TRUE) == "POST") {
@@ -3112,6 +3112,8 @@ class Taller extends CI_Controller
 			echo json_encode($xdatos);
 		}
 	}
+
+	
 }
 
 /* End of file Taller.php */

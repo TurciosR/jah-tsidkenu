@@ -148,6 +148,7 @@ class Ventas extends CI_Controller {
 			foreach ($row as $rows) {
 				//procedemos a obtener el detalle de la venta
 				$detalleV = $this->ventas->get_detalle_venta($rows->id_venta);
+				$detalleS = $this->ventas->get_detalle_serv($rows->id_venta);
 				$menudrop = "<div class='btn-group'>
 				<button data-toggle='dropdown' class='btn btn-success dropdown-toggle' aria-expanded='false'><i class='mdi mdi-menu' aria-haspopup='false'></i> Menu</button>
 				<ul class='dropdown-menu dropdown-menu-right' x-placement='bottom-start'>";
@@ -168,6 +169,8 @@ class Ventas extends CI_Controller {
 
 				$menudrop .= "</ul></div>";
 
+				$spacing = $detalleV->detalle_v != "" ? "<br><br>" : "";
+				$stringserv = $detalleS->detalle_s != "" ? $spacing . $detalleS->detalle_s : "";
 
 				$data[] = array(
 					$rows->id_venta,
@@ -177,7 +180,7 @@ class Ventas extends CI_Controller {
 					// cambios 7-7-2022
 					$rows->nombredoc . $this->getTipoPago($rows->alias_tipopago),
 					$rows->descripcion,
-					$detalleV->detalle_v,
+					$detalleV->detalle_v . $stringserv,
 					$menudrop,
 				);
 			}
