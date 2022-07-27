@@ -832,6 +832,7 @@ class Taller extends CI_Controller
 			$this->utils->begin();
 			$id_trabajo_taller = $this->input->post("id_trabajo_taller");
 			$concepto = strtoupper($this->input->post("concepto"));
+			$encargado = strtoupper($this->input->post("encargado"));
 			$fecha = Y_m_d($this->input->post("fecha"));
 			$total = $this->input->post("total");
 			$id_cliente = $this->input->post("client");
@@ -870,6 +871,7 @@ class Taller extends CI_Controller
 				'fecha' => $fecha,
 				'hora' => $hora,
 				'concepto' => $concepto,
+				'encargado' => $encargado,
 				'indicaciones' => "TRABAJO DE TALLER",
 				'id_cliente' => $id_cliente,
 				'envio' => $envio,
@@ -891,6 +893,7 @@ class Taller extends CI_Controller
 
 			/*editar encabezado*/
 			$this->utils->update('trabajos_taller', $data, "id_trabajo_taller=$id_trabajo_taller");
+			unset($data['encargado']);
 			$data['concepto'] = "FACTURACION DE TRABAJO DE TALLER NRO. " . $id_trabajo_taller;
 			$id_venta = $this->ventas->inAndCon('ventas', $data);
 

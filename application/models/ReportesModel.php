@@ -349,13 +349,14 @@ class ReportesModel extends CI_Model
 		}
 	}
 
-	function get_trabajos_taller_rango($fechaI, $fechaF, $sucursal){
+	function get_trabajos_taller_rango($fechaI, $fechaF, $sucursal, $estado = 2){
 
 			$arrTrabajos =[];
 			$sql = $this->db->query("SELECT tr.*, c.nombre as cnombre, e.descripcion as estado FROM trabajos_taller as tr
 									JOIN clientes as c ON c.id_cliente=tr.id_cliente
 									JOIN estado as e ON tr.id_estado = e.id_estado
-									WHERE tr.fecha BETWEEN '".$fechaI."' AND '".$fechaF."' AND tr.id_sucursal='$sucursal'");
+									WHERE tr.fecha BETWEEN '".$fechaI."' AND '".$fechaF."' 
+									AND tr.id_sucursal='$sucursal' AND tr.id_estado='$estado'");
 
 			if ($sql->num_rows()>0) {
 				return $sql->result();

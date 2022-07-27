@@ -54,7 +54,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
               <div class="col-lg-2">
                 <div class="form-group">
                   <label for="">Fecha Inicio</label>
-                  <input readonly type="text" class="form-control datepicker fechaInicio" name="" value="<?=date("d-m-Y")?>">
+                  <input readonly type="text" class="form-control datepicker fechaInicio" name="" value="<?=date("d-m-Y",strtotime("-1 months"))?>">
                 </div>
               </div>
               <div class="col-lg-2">
@@ -103,7 +103,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 							<div class="col-lg-2">
                 <div class="form-group">
                   <label for="">Fecha Inicio</label>
-                  <input readonly type="text" class="form-control datepicker fechaInicioK" name="" value="<?=date("d-m-Y")?>">
+                  <input readonly type="text" class="form-control datepicker fechaInicioK" name="" value="<?=date("d-m-Y",strtotime("-1 months"))?>">
                 </div>
               </div>
               <div class="col-lg-2">

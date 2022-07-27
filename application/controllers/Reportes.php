@@ -163,6 +163,91 @@ class Reportes extends CI_Controller
 					);
 					$pdf->LineWriteB($array_data);
 				} //fin de reporte utilidades
+				if ($obtenerTipo->parametro == "report_taller") {
+					$totalAcum = 0;
+					$costoAcum = 0;
+					$cantidadAcum = 0;
+
+					$estados = ["2","4"];
+					$descripcionestados = ["Finalizados", "En taller"];
+
+					$l = array(
+						's' => 10,
+						'nom' => 40,
+						'can' => 80,
+						'cos' => 40,
+						'tot' => 25
+					);
+
+					foreach ($estados as $key => $estado) {
+
+					$array_data = array(
+						array('', 10, "C"),
+						array(" Trabajos " . $descripcionestados[$key], 180, "C"),
+					);
+					$pdf->LineWrite($array_data);
+					$pdf->LN(1);
+
+					$array_data = array(
+						array('', $l['s'], "C"),
+						array('Cliente', $l['nom'], "C"),
+						array('Concepto', $l['can'], "C"),
+						array('Encargado(s)', $l['cos'], "C"),
+						array('Total', $l['tot'], "C"),
+					);
+
+						
+					$pdf->LineWriteB($array_data);
+
+					$data = $this->reportes
+					->get_trabajos_taller_rango(Y_m_d($fechaI), Y_m_d($fechaF), $sucursal, $estado);
+					//var_dump($data);
+					$pdf->SetFont('Arial', '', 10);
+					if ($data == 0) {
+						// code...
+						$array_data = array(
+							array('', $l['s'], "C"),
+							array('sin resultados...', $l['nom'], "L"),
+							array('', $l['can'], "R"),
+							array('', $l['cos'], "R"),
+							array('', $l['tot'], "R"),
+						);
+						$pdf->LineWriteB($array_data);
+
+						$pdf->SetFont('Arial', 'B', 10);
+						$pdf->LN(5);
+					} else {
+						// code...
+						foreach ($data as $arrData) {
+							// code...
+							$totalAcum += $arrData->total;
+							// $costoAcum += $arrData->total;
+							$cantidadAcum += 1;
+							$array_data = array(
+								array('', $l['s'], "C"),
+								array($arrData->cnombre, $l['nom'], "L"),
+								array($arrData->concepto, $l['can'], "L"),
+								array($arrData->encargado, $l['cos'], "L"),
+								array("$" . number_format($arrData->total, 2, '.', ''), $l['tot'], "R"),
+							);
+							$pdf->LineWriteB($array_data);
+						}
+
+						$pdf->SetFont('Arial', 'B', 10);
+						$array_data = array(
+							array('', $l['s'], "C"),
+							array('', $l['nom'], "L"),
+							array('', $l['can'], "R"),
+							array("Total", $l['cos'], "R"),
+							array("$" . number_format(($totalAcum), 2, '.', ''), $l['tot'], "R")
+						);
+						$pdf->LineWriteB($array_data);
+
+						$pdf->LN(5);
+						}
+					}
+				}
+				
 			} elseif ($tipoReporte == 1) {
 				// especifico...
 				if ($obtenerTipo->parametro == "report_utilidades") {
@@ -226,67 +311,6 @@ class Reportes extends CI_Controller
 						$pdf->LineWriteB($array_data);
 					}
 				} //fin de reporte utilidades
-				if ($obtenerTipo->parametro = "report_taller") {
-					$totalAcum = 0;
-					$costoAcum = 0;
-					$cantidadAcum = 0;
-					$l = array(
-						's' => 10,
-						'nom' => 50,
-						'can' => 80,
-						'cos' => 30,
-						'tot' => 25
-					);
-					$array_data = array(
-						array('', $l['s'], "C"),
-						array('Cliente', $l['nom'], "C"),
-						array('Concepto.', $l['can'], "C"),
-						array('Estado', $l['cos'], "C"),
-						array('Total', $l['tot'], "C"),
-					);
-					$pdf->LineWriteB($array_data);
-
-					$data = $this->reportes->get_trabajos_taller_rango(Y_m_d($fechaI), Y_m_d($fechaF), $sucursal);
-					//var_dump($data);
-					$pdf->SetFont('Arial', '', 10);
-					if ($data == 0) {
-						// code...
-						$array_data = array(
-							array('', $l['s'], "C"),
-							array('sin resultados...', $l['nom'], "L"),
-							array('', $l['can'], "R"),
-							array('', $l['cos'], "R"),
-							array('', $l['tot'], "R"),
-						);
-						$pdf->LineWriteB($array_data);
-					} else {
-						// code...
-						foreach ($data as $arrData) {
-							// code...
-							$totalAcum += $arrData->total;
-							// $costoAcum += $arrData->total;
-							$cantidadAcum += 1;
-							$array_data = array(
-								array('', $l['s'], "C"),
-								array($arrData->cnombre, $l['nom'], "L"),
-								array($arrData->concepto, $l['can'], "R"),
-								array($arrData->estado, $l['cos'], "R"),
-								array("$" . number_format($arrData->total, 2, '.', ''), $l['tot'], "R"),
-							);
-							$pdf->LineWriteB($array_data);
-						}
-
-						$pdf->SetFont('Arial', 'B', 10);
-						$array_data = array(
-							array('', $l['s'], "C"),
-							array('', $l['nom'], "L"),
-							array('', $l['can'], "R"),
-							array("Total", $l['cos'], "R"),
-							array("$" . number_format(($totalAcum), 2, '.', ''), $l['tot'], "R")
-						);
-						$pdf->LineWriteB($array_data);
-					}
-				}
 			}
 		} //emergencias reportadas
 		$pdf->Output();
